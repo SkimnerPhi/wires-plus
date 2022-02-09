@@ -1,0 +1,10 @@
+{
+    "entry": "main.js",
+    "id": "wires-plus",
+    "version": "0.1.0",
+    "name": "Wires+",
+    "author": "SkimnerPhi",
+    "description": "Adds commonly used wire designs as single buildings",
+    "website": "https://github.com/SkimnerPhi/shapezio-mods",
+    "settings": {}
+}
