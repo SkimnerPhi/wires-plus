@@ -12,7 +12,17 @@ export class MultiplexerSystem extends GameSystemWithFilter {
             const muxerComp = entity.components.Multiplexer;
             const slotComp = entity.components.WiredPins;
 
-            const address = isTruthyItem(slotComp.slots[0].linkedNetwork?.currentValue);
+            const addressNetwork = slotComp.slots[0].linkedNetwork;
+            if (addressNetwork?.valueConflict) {
+                switch (muxerComp.type) {
+                    // @ts-ignore
+                    case enumMultiplexerType.demuxer:
+                        slotComp.slots[2].value = null;
+                    case enumMultiplexerType.muxer:
+                        slotComp.slots[3].value = null;
+                }
+            }
+            const address = isTruthyItem(addressNetwork?.currentValue);
             switch (muxerComp.type) {
                 case enumMultiplexerType.muxer: {
                     const inputPin = address ? slotComp.slots[1] : slotComp.slots[2];
