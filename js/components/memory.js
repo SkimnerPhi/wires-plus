@@ -4,7 +4,7 @@ import { typeItemSingleton } from "shapez/game/item_resolver";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 
 export const enumMemoryType = {
-    [defaultBuildingVariant]: "sr",
+    [defaultBuildingVariant]: "jk",
     jk: "jk",
     t: "t",
 };
