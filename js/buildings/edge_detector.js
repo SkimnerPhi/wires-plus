@@ -1,16 +1,16 @@
-const { Vector, enumDirection } = require("shapez/core/vector");
-const { WiredPinsComponent, enumPinSlotType } = require("shapez/game/components/wired_pins");
-const { defaultBuildingVariant } = require("shapez/game/meta_building");
-const { enumHubGoalRewards } = require("shapez/game/tutorial_goals");
-const { ModMetaBuilding } = require("shapez/mods/mod_meta_building");
-const { enumEdgeDetectorType, EdgeDetectorComponent } = require("../components/edge_detector");
+import { Vector, enumDirection } from "shapez/core/vector";
+import { WiredPinsComponent, enumPinSlotType } from "shapez/game/components/wired_pins";
+import { defaultBuildingVariant } from "shapez/game/meta_building";
+import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
+import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
+import { enumEdgeDetectorType, EdgeDetectorComponent } from "../components/edge_detector";
 
-import risingBaseImage from "../res/sprites/buildings/edge_detector_rising.png";
-import risingGhostImage from "../res/sprites/blueprints/edge_detector_rising.png";
-import fallingBaseImage from "../res/sprites/buildings/edge_detector_falling.png";
-import fallingGhostImage from "../res/sprites/blueprints/edge_detector_falling.png";
-import changeBaseImage from "../res/sprites/buildings/edge_detector_change.png";
-import changeGhostImage from "../res/sprites/blueprints/edge_detector_change.png";
+import risingBaseImage from "../../res/sprites/buildings/edge_detector_rising.png";
+import risingGhostImage from "../../res/sprites/blueprints/edge_detector_rising.png";
+import fallingBaseImage from "../../res/sprites/buildings/edge_detector_falling.png";
+import fallingGhostImage from "../../res/sprites/blueprints/edge_detector_falling.png";
+import changeBaseImage from "../../res/sprites/buildings/edge_detector_change.png";
+import changeGhostImage from "../../res/sprites/blueprints/edge_detector_change.png";
 
 export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
     constructor() {
@@ -21,7 +21,7 @@ export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
             {
                 variant: defaultBuildingVariant,
                 name: "Rising Edge Detector",
-                description: "Pulses true when the input goes from low to high",
+                description: "Pulses true when the input goes from low to high.",
                 regularImageBase64: risingBaseImage,
                 blueprintImageBase64: risingGhostImage,
                 tutorialImageBase64: risingBaseImage,
@@ -29,7 +29,7 @@ export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
             {
                 variant: enumEdgeDetectorType.falling,
                 name: "Falling Edge Detector",
-                description: "Pulses true when the input goes from high to low",
+                description: "Pulses true when the input goes from high to low.",
                 regularImageBase64: fallingBaseImage,
                 blueprintImageBase64: fallingGhostImage,
                 tutorialImageBase64: fallingBaseImage,
@@ -37,7 +37,7 @@ export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
             {
                 variant: enumEdgeDetectorType.change,
                 name: "Change Detector",
-                description: "Pulses true when the input changes",
+                description: "Pulses true when the input changes.",
                 regularImageBase64: changeBaseImage,
                 blueprintImageBase64: changeGhostImage,
                 tutorialImageBase64: changeBaseImage,

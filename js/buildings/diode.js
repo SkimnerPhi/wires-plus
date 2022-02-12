@@ -1,12 +1,12 @@
-const { Vector, enumDirection } = require("shapez/core/vector");
-const { WiredPinsComponent, enumPinSlotType } = require("shapez/game/components/wired_pins");
-const { defaultBuildingVariant } = require("shapez/game/meta_building");
-const { enumHubGoalRewards } = require("shapez/game/tutorial_goals");
-const { ModMetaBuilding } = require("shapez/mods/mod_meta_building");
-const { DiodeComponent } = require("../components/diode");
+import { Vector, enumDirection } from "shapez/core/vector";
+import { WiredPinsComponent, enumPinSlotType } from "shapez/game/components/wired_pins";
+import { defaultBuildingVariant } from "shapez/game/meta_building";
+import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
+import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
+import { DiodeComponent } from "../components/diode";
 
-import baseImage from "../res/sprites/buildings/diode.png";
-import ghostImage from "../res/sprites/blueprints/diode.png";
+import baseImage from "../../res/sprites/buildings/diode.png";
+import ghostImage from "../../res/sprites/blueprints/diode.png";
 
 export class MetaDiodeBuilding extends ModMetaBuilding {
     constructor() {
@@ -17,7 +17,7 @@ export class MetaDiodeBuilding extends ModMetaBuilding {
             {
                 variant: defaultBuildingVariant,
                 name: "Diode",
-                description: "A simple one-way gate",
+                description: "A simple one-way gate.",
                 regularImageBase64: baseImage,
                 blueprintImageBase64: ghostImage,
                 tutorialImageBase64: baseImage,

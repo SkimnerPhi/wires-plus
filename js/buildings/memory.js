@@ -1,14 +1,14 @@
-const { Vector, enumDirection } = require("shapez/core/vector");
-const { enumPinSlotType, WiredPinsComponent } = require("shapez/game/components/wired_pins");
-const { defaultBuildingVariant } = require("shapez/game/meta_building");
-const { enumHubGoalRewards } = require("shapez/game/tutorial_goals");
-const { ModMetaBuilding } = require("shapez/mods/mod_meta_building");
-const { enumMemoryType, MemoryComponent } = require("../components/memory");
+import { Vector, enumDirection } from "shapez/core/vector";
+import { enumPinSlotType, WiredPinsComponent } from "shapez/game/components/wired_pins";
+import { defaultBuildingVariant } from "shapez/game/meta_building";
+import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
+import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
+import { enumMemoryType, MemoryComponent } from "../components/memory";
 
-import jkBaseImage from "../res/sprites/buildings/memory_jk.png";
-import jkGhostImage from "../res/sprites/blueprints/memory_jk.png";
-import tBaseImage from "../res/sprites/buildings/memory_t.png";
-import tGhostImage from "../res/sprites/blueprints/memory_t.png";
+import jkBaseImage from "../../res/sprites/buildings/memory_jk.png";
+import jkGhostImage from "../../res/sprites/blueprints/memory_jk.png";
+import tBaseImage from "../../res/sprites/buildings/memory_t.png";
+import tGhostImage from "../../res/sprites/blueprints/memory_t.png";
 
 export class MetaMemoryBuilding extends ModMetaBuilding {
     constructor() {
@@ -19,7 +19,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
             {
                 variant: defaultBuildingVariant,
                 name: "JK Flip-Flop",
-                description: "Stores a boolean value based on which input was triggered last",
+                description: "Stores a boolean value based on which input was triggered last.",
                 regularImageBase64: jkBaseImage,
                 blueprintImageBase64: jkGhostImage,
                 tutorialImageBase64: jkBaseImage,
@@ -27,7 +27,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
             {
                 variant: enumMemoryType.t,
                 name: "T Flip-Flop",
-                description: "Toggles the output when the input is triggered",
+                description: "Toggles the output when the input is triggered.",
                 regularImageBase64: tBaseImage,
                 blueprintImageBase64: tGhostImage,
                 tutorialImageBase64: tBaseImage,
