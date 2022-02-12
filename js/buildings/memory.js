@@ -11,6 +11,12 @@ import jkDemoImage from "../../res/sprites/building_tutorials/memory_jk.png";
 import tBaseImage from "../../res/sprites/buildings/memory_t.png";
 import tGhostImage from "../../res/sprites/blueprints/memory_t.png";
 import tDemoImage from "../../res/sprites/building_tutorials/memory_t.png";
+import simpleBaseImage from "../../res/sprites/buildings/memory_simple.png";
+import simpleGhostImage from "../../res/sprites/blueprints/memory_simple.png";
+import simpleDemoImage from "../../res/sprites/building_tutorials/memory_simple.png";
+import writeEnableBaseImage from "../../res/sprites/buildings/memory_write_enable.png";
+import writeEnableGhostImage from "../../res/sprites/blueprints/memory_write_enable.png";
+import writeEnableDemoImage from "../../res/sprites/building_tutorials/memory_write_enable.png";
 
 export class MetaMemoryBuilding extends ModMetaBuilding {
     constructor() {
@@ -34,13 +40,34 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                 blueprintImageBase64: tGhostImage,
                 tutorialImageBase64: tDemoImage,
             },
+            {
+                variant: enumMemoryType.simple,
+                name: "Simple Memory Cell",
+                description: "Stores the last value input. Conflict resets the memory.",
+                regularImageBase64: simpleBaseImage,
+                blueprintImageBase64: simpleGhostImage,
+                tutorialImageBase64: simpleDemoImage,
+            },
+            {
+                variant: enumMemoryType.writeEnable,
+                name: "Write-Enable Memory Cell",
+                description: "Stores the left input when the bottom input is enabled.",
+                regularImageBase64: writeEnableBaseImage,
+                blueprintImageBase64: writeEnableGhostImage,
+                tutorialImageBase64: writeEnableDemoImage,
+            }
         ];
     }
     getSilhouetteColor() {
         return "#80B3FF";
     }
     getAvailableVariants(root) {
-        return [defaultBuildingVariant, enumMemoryType.t];
+        return [
+            defaultBuildingVariant,
+            enumMemoryType.t,
+            enumMemoryType.simple,
+            enumMemoryType.writeEnable,
+        ];
     }
     getIsUnlocked(root) {
         return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_logic_gates);
@@ -51,8 +78,10 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
     getDimensions(variant) {
         switch (variant) {
             case defaultBuildingVariant:
+            case enumMemoryType.writeEnable:
                 return new Vector(2, 1);
             case enumMemoryType.t:
+            case enumMemoryType.simple:
                 return new Vector(1, 1);
         }
     }
@@ -91,6 +120,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                 ]);
                 break;
             case enumMemoryType.t:
+            case enumMemoryType.simple:
                 pinComp.setSlots([
                     {
                         pos: new Vector(0, 0),
@@ -100,6 +130,25 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                     {
                         pos: new Vector(0, 0),
                         direction: enumDirection.top,
+                        type: enumPinSlotType.logicalEjector,
+                    },
+                ]);
+                break;
+            case enumMemoryType.writeEnable:
+                pinComp.setSlots([
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.left,
+                        type: enumPinSlotType.logicalAcceptor,
+                    },
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.bottom,
+                        type: enumPinSlotType.logicalAcceptor,
+                    },
+                    {
+                        pos: new Vector(1, 0),
+                        direction: enumDirection.right,
                         type: enumPinSlotType.logicalEjector,
                     },
                 ]);

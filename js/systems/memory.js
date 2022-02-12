@@ -74,6 +74,40 @@ export class MemorySystem extends GameSystemWithFilter {
 
                     break;
                 }
+                case enumMemoryType.simple: {
+                    const iNetwork = slotComp.slots[0].linkedNetwork;
+                    if (iNetwork?.valueConflict) {
+                        memComp.signal = null;
+                        slotComp.slots[1].value = null;
+                        continue;
+                    }
+
+                    const iValue = iNetwork?.currentValue;
+
+                    if (iValue) {
+                        memComp.signal = iValue;
+                        slotComp.slots[1].value = memComp.signal;
+                    }
+
+                    break;
+                }
+                case enumMemoryType.writeEnable: {
+                    const iNetwork = slotComp.slots[0].linkedNetwork;
+                    const weNetwork = slotComp.slots[1].linkedNetwork;
+
+                    if (!weNetwork?.valueConflict && isTruthyItem(weNetwork?.currentValue)) {
+                        if (iNetwork?.valueConflict) {
+                            memComp.signal = null;
+                            slotComp.slots[2].value = null;
+                            continue;
+                        }
+
+                        memComp.signal = iNetwork?.currentValue;
+                        slotComp.slots[2].value = memComp.signal;
+
+                        break;
+                    }
+                }
             }
         }
     }

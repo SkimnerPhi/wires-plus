@@ -1,12 +1,15 @@
 import { Component } from "shapez/game/component";
-import { BOOL_FALSE_SINGLETON } from "shapez/game/items/boolean_item";
+import { isTruthyItem } from "shapez/game/items/boolean_item";
 import { typeItemSingleton } from "shapez/game/item_resolver";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
+import { castBool } from "../utils";
 
 export const enumMemoryType = {
     [defaultBuildingVariant]: "jk",
     jk: "jk",
     t: "t",
+    simple: "simple",
+    writeEnable: "writeEnable"
 };
 export class MemoryComponent extends Component {
     static getId() {
@@ -20,7 +23,18 @@ export class MemoryComponent extends Component {
     constructor({ type = enumMemoryType.jk, signal = null }) {
         super();
         this.type = type;
-        // this is in place to support non-boolean values in the future
-        this.signal = !signal && type !== null ? BOOL_FALSE_SINGLETON : signal;
+        
+        switch(type) {
+            case enumMemoryType.jk:
+            case enumMemoryType.t: {
+                this.signal = castBool(isTruthyItem(signal));
+                break;
+            }
+            case enumMemoryType.simple:
+            case enumMemoryType.writeEnable: {
+                this.signal = signal;
+                break;
+            }
+        }
     }
 }
