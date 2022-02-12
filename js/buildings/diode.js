@@ -5,8 +5,6 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { DiodeComponent } from "../components/diode";
 
-import baseImage from "../../res/sprites/buildings/diode.png";
-import ghostImage from "../../res/sprites/blueprints/diode.png";
 import demoImage from "../../res/sprites/building_tutorials/diode.png";
 
 export class MetaDiodeBuilding extends ModMetaBuilding {
@@ -19,8 +17,6 @@ export class MetaDiodeBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "Diode",
                 description: "A simple one-way gate.",
-                regularImageBase64: baseImage,
-                blueprintImageBase64: ghostImage,
                 tutorialImageBase64: demoImage,
             },
         ];

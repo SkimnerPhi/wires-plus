@@ -24,9 +24,9 @@ import { SmartProcessorSystem } from "./systems/smart_processor";
 import { VirtualMixerSystem } from "./systems/virtual_mixer";
 
 import adderIcon from "../res/sprites/building_icons/adder.png";
-import advancedProcessorIcon from "../res/sprites/building_icons/advanced_processor.png";
+import advancedProcessorIcon from "../res/sprites/building_icons/advancedProcessor.png";
 import diodeIcon from "../res/sprites/building_icons/diode.png";
-import edgeDetectorIcon from "../res/sprites/building_icons/edge_detector.png";
+import edgeDetectorIcon from "../res/sprites/building_icons/edgeDetector.png";
 import memoryIcon from "../res/sprites/building_icons/memory.png";
 import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
 

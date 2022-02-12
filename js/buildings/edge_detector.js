@@ -5,13 +5,7 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumEdgeDetectorType, EdgeDetectorComponent } from "../components/edge_detector";
 
-import risingBaseImage from "../../res/sprites/buildings/edge_detector_rising.png";
-import risingGhostImage from "../../res/sprites/blueprints/edge_detector_rising.png";
-import fallingBaseImage from "../../res/sprites/buildings/edge_detector_falling.png";
-import fallingGhostImage from "../../res/sprites/blueprints/edge_detector_falling.png";
-import changeBaseImage from "../../res/sprites/buildings/edge_detector_change.png";
-import changeGhostImage from "../../res/sprites/blueprints/edge_detector_change.png";
-import demoImage from "../../res/sprites/building_tutorials/edge_detector.png";
+import demoImage from "../../res/sprites/building_tutorials/edgeDetector.png";
 
 export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
     constructor() {
@@ -23,24 +17,18 @@ export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "Rising Edge Detector",
                 description: "Pulses true when the input goes from low to high.",
-                regularImageBase64: risingBaseImage,
-                blueprintImageBase64: risingGhostImage,
                 tutorialImageBase64: demoImage,
             },
             {
                 variant: enumEdgeDetectorType.falling,
                 name: "Falling Edge Detector",
                 description: "Pulses true when the input goes from high to low.",
-                regularImageBase64: fallingBaseImage,
-                blueprintImageBase64: fallingGhostImage,
                 tutorialImageBase64: demoImage,
             },
             {
                 variant: enumEdgeDetectorType.change,
                 name: "Change Detector",
                 description: "Pulses true when the input changes.",
-                regularImageBase64: changeBaseImage,
-                blueprintImageBase64: changeGhostImage,
                 tutorialImageBase64: demoImage,
             },
         ];

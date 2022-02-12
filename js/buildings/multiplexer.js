@@ -5,12 +5,8 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumMultiplexerType, MultiplexerComponent } from "../components/multiplexer";
 
-import multiplexerBaseImage from "../../res/sprites/buildings/multiplexer.png";
-import multiplexerGhostImage from "../../res/sprites/blueprints/multiplexer.png";
 import multiplexerDemoImage from "../../res/sprites/building_tutorials/multiplexer.png";
-import demultiplexerBaseImage from "../../res/sprites/buildings/demultiplexer.png";
-import demultiplexerGhostImage from "../../res/sprites/blueprints/demultiplexer.png";
-import demultiplexerDemoImage from "../../res/sprites/building_tutorials/demultiplexer.png";
+import demultiplexerDemoImage from "../../res/sprites/building_tutorials/multiplexer-demuxer.png";
 
 export class MetaMultiplexerBuilding extends ModMetaBuilding {
     constructor() {
@@ -22,16 +18,12 @@ export class MetaMultiplexerBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "Multiplexer",
                 description: "Select from the two bottom inputs using a boolean on the right input.",
-                regularImageBase64: multiplexerBaseImage,
-                blueprintImageBase64: multiplexerGhostImage,
                 tutorialImageBase64: multiplexerDemoImage,
             },
             {
                 variant: enumMultiplexerType.demuxer,
                 name: "Demultiplexer",
                 description: "Select from the two outputs using a boolean on the right input.",
-                regularImageBase64: demultiplexerBaseImage,
-                blueprintImageBase64: demultiplexerGhostImage,
                 tutorialImageBase64: demultiplexerDemoImage,
             },
         ];

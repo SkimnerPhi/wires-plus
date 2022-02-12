@@ -5,18 +5,10 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumMemoryType, MemoryComponent } from "../components/memory";
 
-import jkBaseImage from "../../res/sprites/buildings/memory_jk.png";
-import jkGhostImage from "../../res/sprites/blueprints/memory_jk.png";
-import jkDemoImage from "../../res/sprites/building_tutorials/memory_jk.png";
-import tBaseImage from "../../res/sprites/buildings/memory_t.png";
-import tGhostImage from "../../res/sprites/blueprints/memory_t.png";
-import tDemoImage from "../../res/sprites/building_tutorials/memory_t.png";
-import simpleBaseImage from "../../res/sprites/buildings/memory_simple.png";
-import simpleGhostImage from "../../res/sprites/blueprints/memory_simple.png";
-import simpleDemoImage from "../../res/sprites/building_tutorials/memory_simple.png";
-import writeEnableBaseImage from "../../res/sprites/buildings/memory_write_enable.png";
-import writeEnableGhostImage from "../../res/sprites/blueprints/memory_write_enable.png";
-import writeEnableDemoImage from "../../res/sprites/building_tutorials/memory_write_enable.png";
+import jkDemoImage from "../../res/sprites/building_tutorials/memory.png";
+import tDemoImage from "../../res/sprites/building_tutorials/memory-t.png";
+import simpleDemoImage from "../../res/sprites/building_tutorials/memory-simple.png";
+import writeEnableDemoImage from "../../res/sprites/building_tutorials/memory-writeEnable.png";
 
 export class MetaMemoryBuilding extends ModMetaBuilding {
     constructor() {
@@ -28,32 +20,24 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "JK Flip-Flop",
                 description: "Stores a boolean value based on which input was triggered last.",
-                regularImageBase64: jkBaseImage,
-                blueprintImageBase64: jkGhostImage,
                 tutorialImageBase64: jkDemoImage,
             },
             {
                 variant: enumMemoryType.t,
                 name: "T Flip-Flop",
                 description: "Toggles the output when the input is triggered.",
-                regularImageBase64: tBaseImage,
-                blueprintImageBase64: tGhostImage,
                 tutorialImageBase64: tDemoImage,
             },
             {
                 variant: enumMemoryType.simple,
                 name: "Simple Memory Cell",
                 description: "Stores the last value input. Conflict resets the memory.",
-                regularImageBase64: simpleBaseImage,
-                blueprintImageBase64: simpleGhostImage,
                 tutorialImageBase64: simpleDemoImage,
             },
             {
                 variant: enumMemoryType.writeEnable,
                 name: "Write-Enable Memory Cell",
                 description: "Stores the left input when the bottom input is enabled.",
-                regularImageBase64: writeEnableBaseImage,
-                blueprintImageBase64: writeEnableGhostImage,
                 tutorialImageBase64: writeEnableDemoImage,
             }
         ];

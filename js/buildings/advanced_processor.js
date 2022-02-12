@@ -9,19 +9,10 @@ import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumVxMixerType, VirtualMixerComponent } from "../components/virtual_mixer";
 import { enumSmartProcessorType, SmartProcessorComponent } from "../components/smart_processor";
 
-import mixerBaseImage from "../../res/sprites/buildings/virtual_mixer.png";
-import mixerGhostImage from "../../res/sprites/blueprints/virtual_mixer.png";
-import mixerDemoImage from "../../res/sprites/building_tutorials/virtual_mixer.png";
-import unmixerBaseImage from "../../res/sprites/buildings/virtual_unmixer.png";
-import unmixerGhostImage from "../../res/sprites/blueprints/virtual_unmixer.png";
-import unmixerDemoImage from "../../res/sprites/building_tutorials/virtual_unmixer.png";
-
-import stackerBaseImage from "../../res/sprites/buildings/smart_stacker.png";
-import stackerGhostImage from "../../res/sprites/blueprints/smart_stacker.png";
-import stackerDemoImage from "../../res/sprites/building_tutorials/smart_stacker.png";
-import painterBaseImage from "../../res/sprites/buildings/smart_painter.png";
-import painterGhostImage from "../../res/sprites/blueprints/smart_painter.png";
-import painterDemoImage from "../../res/sprites/building_tutorials/smart_painter.png";
+import mixerDemoImage from "../../res/sprites/building_tutorials/advancedProcessor.png";
+import unmixerDemoImage from "../../res/sprites/building_tutorials/advancedProcessor-unmixer.png";
+import stackerDemoImage from "../../res/sprites/building_tutorials/advancedProcessor-stacker.png";
+import painterDemoImage from "../../res/sprites/building_tutorials/advancedProcessor-painter.png";
 
 const colors = {
     [defaultBuildingVariant]: new MetaMixerBuilding().getSilhouetteColor(),
@@ -41,32 +32,24 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "Virtual Mixer",
                 description: "Compute a color from three boolean channels.",
-                regularImageBase64: mixerBaseImage,
-                blueprintImageBase64: mixerGhostImage,
                 tutorialImageBase64: mixerDemoImage,
             },
             {
                 variant: enumVxMixerType.unmixer,
                 name: "Virtual Unmixer",
                 description: "Split a color to three boolean channels.",
-                regularImageBase64: unmixerBaseImage,
-                blueprintImageBase64: unmixerGhostImage,
                 tutorialImageBase64: unmixerDemoImage,
             },
             {
                 variant: enumSmartProcessorType.stacker,
                 name: "Smart Stacker",
                 description: "Virtually stacks the right shape onto the left, or just outputs the input shape otherwise.",
-                regularImageBase64: stackerBaseImage,
-                blueprintImageBase64: stackerGhostImage,
                 tutorialImageBase64: stackerDemoImage,
             },
             {
                 variant: enumSmartProcessorType.painter,
                 name: "Smart Painter",
                 description: "Virtually paints the shape from the bottom input with the color on the right input, or just outputs the input shape otherwise.",
-                regularImageBase64: painterBaseImage,
-                blueprintImageBase64: painterGhostImage,
                 tutorialImageBase64: painterDemoImage,
             }
         ];
