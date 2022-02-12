@@ -1,17 +1,18 @@
 import { Mod } from "shapez/mods/mod";
 
 import { MetaAdderBuilding } from "./buildings/adder";
+import { MetaAdvancedProcessorBuilding } from "./buildings/advanced_processor";
 import { MetaDiodeBuilding } from "./buildings/diode";
 import { MetaEdgeDetectorBuilding } from "./buildings/edge_detector";
 import { MetaMemoryBuilding } from "./buildings/memory";
 import { MetaMultiplexerBuilding } from "./buildings/multiplexer";
-import { MetaVirtualMixerBuilding } from "./buildings/virtual_mixer";
 
 import { AdderComponent } from "./components/adder";
 import { DiodeComponent } from "./components/diode";
 import { EdgeDetectorComponent } from "./components/edge_detector";
 import { MemoryComponent } from "./components/memory";
 import { MultiplexerComponent } from "./components/multiplexer";
+import { SmartProcessorComponent } from "./components/smart_processor";
 import { VirtualMixerComponent } from "./components/virtual_mixer";
 
 import { AdderSystem } from "./systems/adder";
@@ -19,14 +20,17 @@ import { DiodeSystem } from "./systems/diode";
 import { EdgeDetectorSystem } from "./systems/edge_detector";
 import { MemorySystem } from "./systems/memory";
 import { MultiplexerSystem } from "./systems/multiplexer";
+import { SmartProcessorSystem } from "./systems/smart_processor";
 import { VirtualMixerSystem } from "./systems/virtual_mixer";
 
-import adderIcon from "./res/sprites/building_icons/adder.png";
-import diodeIcon from "./res/sprites/building_icons/diode.png";
-import edgeDetectorIcon from "./res/sprites/building_icons/edge_detector.png";
-import memoryIcon from "./res/sprites/building_icons/memory.png";
-import multiplexerIcon from "./res/sprites/building_icons/multiplexer.png";
-import virtualMixerIcon from "./res/sprites/building_icons/virtual_mixer.png";
+import adderIcon from "../res/sprites/building_icons/adder.png";
+import advancedProcessorIcon from "../res/sprites/building_icons/advanced_processor.png";
+import diodeIcon from "../res/sprites/building_icons/diode.png";
+import edgeDetectorIcon from "../res/sprites/building_icons/edge_detector.png";
+import memoryIcon from "../res/sprites/building_icons/memory.png";
+import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
+
+import META from "../mod.json";
 
 class ModImpl extends Mod {
     init() {
@@ -35,6 +39,7 @@ class ModImpl extends Mod {
         this.modInterface.registerComponent(EdgeDetectorComponent);
         this.modInterface.registerComponent(MemoryComponent);
         this.modInterface.registerComponent(MultiplexerComponent);
+        this.modInterface.registerComponent(SmartProcessorComponent);
         this.modInterface.registerComponent(VirtualMixerComponent);
 
         this.modInterface.registerNewBuilding({
@@ -58,8 +63,8 @@ class ModImpl extends Mod {
             buildingIconBase64: multiplexerIcon,
         });
         this.modInterface.registerNewBuilding({
-            metaClass: MetaVirtualMixerBuilding,
-            buildingIconBase64: virtualMixerIcon,
+            metaClass: MetaAdvancedProcessorBuilding,
+            buildingIconBase64: advancedProcessorIcon,
         });
 
         this.modInterface.addNewBuildingToToolbar({
@@ -85,7 +90,7 @@ class ModImpl extends Mod {
         this.modInterface.addNewBuildingToToolbar({
             toolbar: "wires",
             location: "primary",
-            metaClass: MetaVirtualMixerBuilding,
+            metaClass: MetaAdvancedProcessorBuilding,
         });
         this.modInterface.addNewBuildingToToolbar({
             toolbar: "wires",
@@ -104,6 +109,11 @@ class ModImpl extends Mod {
             before: "end",
         });
         this.modInterface.registerGameSystem({
+            id: "edgeDetector",
+            systemClass: EdgeDetectorSystem,
+            before: "end",
+        });
+        this.modInterface.registerGameSystem({
             id: "memory",
             systemClass: MemorySystem,
             before: "end",
@@ -114,13 +124,13 @@ class ModImpl extends Mod {
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "virtualMixer",
-            systemClass: VirtualMixerSystem,
+            id: "smartProcessor",
+            systemClass: SmartProcessorSystem,
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "edgeDetector",
-            systemClass: EdgeDetectorSystem,
+            id: "virtualMixer",
+            systemClass: VirtualMixerSystem,
             before: "end",
         });
     }

@@ -11,7 +11,7 @@ export class VirtualMixerComponent extends Component {
     static getId() {
         return "VirtualMixer";
     }
-    constructor({ type = enumVxMixerType.muxer }) {
+    constructor({ type = enumVxMixerType.mixer }) {
         super();
         this.type = type;
     }
