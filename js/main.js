@@ -1,4 +1,6 @@
 import { Mod } from "shapez/mods/mod";
+import { enumWireVariant } from "shapez/game/buildings/wire";
+import { MetaWireBuilding } from "shapez/game/buildings/wire";
 
 import { MetaAdderBuilding } from "./buildings/adder";
 import { MetaAdvancedProcessorBuilding } from "./buildings/advanced_processor";
@@ -24,9 +26,9 @@ import { SmartProcessorSystem } from "./systems/smart_processor";
 import { VirtualMixerSystem } from "./systems/virtual_mixer";
 
 import adderIcon from "../res/sprites/building_icons/adder.png";
-import advancedProcessorIcon from "../res/sprites/building_icons/advancedProcessor.png";
+import advancedProcessorIcon from "../res/sprites/building_icons/advanced_processor.png";
 import diodeIcon from "../res/sprites/building_icons/diode.png";
-import edgeDetectorIcon from "../res/sprites/building_icons/edgeDetector.png";
+import edgeDetectorIcon from "../res/sprites/building_icons/edge_detector.png";
 import memoryIcon from "../res/sprites/building_icons/memory.png";
 import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
 
@@ -109,7 +111,7 @@ class ModImpl extends Mod {
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "edgeDetector",
+            id: "edge_detector",
             systemClass: EdgeDetectorSystem,
             before: "end",
         });
@@ -124,12 +126,12 @@ class ModImpl extends Mod {
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "smartProcessor",
+            id: "smart_processor",
             systemClass: SmartProcessorSystem,
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "virtualMixer",
+            id: "virtual_mixer",
             systemClass: VirtualMixerSystem,
             before: "end",
         });

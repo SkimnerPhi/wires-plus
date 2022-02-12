@@ -5,11 +5,11 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumEdgeDetectorType, EdgeDetectorComponent } from "../components/edge_detector";
 
-import demoImage from "../../res/sprites/building_tutorials/edgeDetector.png";
+import demoImage from "../../res/sprites/building_tutorials/edge_detector.png";
 
 export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
     constructor() {
-        super("edgeDetector");
+        super("edge_detector");
     }
     static getAllVariantCombinations() {
         return [

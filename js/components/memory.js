@@ -9,7 +9,7 @@ export const enumMemoryType = {
     jk: "jk",
     t: "t",
     simple: "simple",
-    writeEnable: "writeEnable"
+    writeEnable: "write_enable"
 };
 export class MemoryComponent extends Component {
     static getId() {

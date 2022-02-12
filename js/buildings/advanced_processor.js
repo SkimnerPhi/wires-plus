@@ -9,10 +9,10 @@ import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumVxMixerType, VirtualMixerComponent } from "../components/virtual_mixer";
 import { enumSmartProcessorType, SmartProcessorComponent } from "../components/smart_processor";
 
-import mixerDemoImage from "../../res/sprites/building_tutorials/advancedProcessor.png";
-import unmixerDemoImage from "../../res/sprites/building_tutorials/advancedProcessor-unmixer.png";
-import stackerDemoImage from "../../res/sprites/building_tutorials/advancedProcessor-stacker.png";
-import painterDemoImage from "../../res/sprites/building_tutorials/advancedProcessor-painter.png";
+import mixerDemoImage from "../../res/sprites/building_tutorials/advanced_processor.png";
+import unmixerDemoImage from "../../res/sprites/building_tutorials/advanced_processor-unmixer.png";
+import stackerDemoImage from "../../res/sprites/building_tutorials/advanced_processor-stacker.png";
+import painterDemoImage from "../../res/sprites/building_tutorials/advanced_processor-painter.png";
 
 const colors = {
     [defaultBuildingVariant]: new MetaMixerBuilding().getSilhouetteColor(),
@@ -24,7 +24,7 @@ const colors = {
 
 export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
     constructor() {
-        super("advancedProcessor");
+        super("advanced_processor");
     }
     static getAllVariantCombinations() {
         return [
