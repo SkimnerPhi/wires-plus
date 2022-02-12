@@ -7,6 +7,7 @@ import { AdderComponent } from "../components/adder";
 
 import baseImage from "../../res/sprites/buildings/adder.png";
 import ghostImage from "../../res/sprites/blueprints/adder.png";
+import demoImage from "../../res/sprites/building_tutorials/adder.png";
 
 export class MetaAdderBuilding extends ModMetaBuilding {
     constructor() {
@@ -20,7 +21,7 @@ export class MetaAdderBuilding extends ModMetaBuilding {
                 description: "Add 3 booleans together and output the result (top) and carry (left).",
                 regularImageBase64: baseImage,
                 blueprintImageBase64: ghostImage,
-                tutorialImageBase64: baseImage,
+                tutorialImageBase64: demoImage,
             },
         ];
     }

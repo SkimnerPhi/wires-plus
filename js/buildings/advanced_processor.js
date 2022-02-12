@@ -11,13 +11,17 @@ import { enumSmartProcessorType, SmartProcessorComponent } from "../components/s
 
 import mixerBaseImage from "../../res/sprites/buildings/virtual_mixer.png";
 import mixerGhostImage from "../../res/sprites/blueprints/virtual_mixer.png";
+import mixerDemoImage from "../../res/sprites/building_tutorials/virtual_mixer.png";
 import unmixerBaseImage from "../../res/sprites/buildings/virtual_unmixer.png";
 import unmixerGhostImage from "../../res/sprites/blueprints/virtual_unmixer.png";
+import unmixerDemoImage from "../../res/sprites/building_tutorials/virtual_unmixer.png";
 
 import stackerBaseImage from "../../res/sprites/buildings/smart_stacker.png";
 import stackerGhostImage from "../../res/sprites/blueprints/smart_stacker.png";
+import stackerDemoImage from "../../res/sprites/building_tutorials/smart_stacker.png";
 import painterBaseImage from "../../res/sprites/buildings/smart_painter.png";
 import painterGhostImage from "../../res/sprites/blueprints/smart_painter.png";
+import painterDemoImage from "../../res/sprites/building_tutorials/smart_painter.png";
 
 const colors = {
     [defaultBuildingVariant]: new MetaMixerBuilding().getSilhouetteColor(),
@@ -39,7 +43,7 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 description: "Compute a color from three boolean channels.",
                 regularImageBase64: mixerBaseImage,
                 blueprintImageBase64: mixerGhostImage,
-                tutorialImageBase64: mixerBaseImage,
+                tutorialImageBase64: mixerDemoImage,
             },
             {
                 variant: enumVxMixerType.unmixer,
@@ -47,7 +51,7 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 description: "Split a color to three boolean channels.",
                 regularImageBase64: unmixerBaseImage,
                 blueprintImageBase64: unmixerGhostImage,
-                tutorialImageBase64: unmixerBaseImage,
+                tutorialImageBase64: unmixerDemoImage,
             },
             {
                 variant: enumSmartProcessorType.stacker,
@@ -55,7 +59,7 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 description: "Virtually stacks the right shape onto the left, or just outputs the input shape otherwise.",
                 regularImageBase64: stackerBaseImage,
                 blueprintImageBase64: stackerGhostImage,
-                tutorialImageBase64: stackerBaseImage,
+                tutorialImageBase64: stackerDemoImage,
             },
             {
                 variant: enumSmartProcessorType.painter,
@@ -63,7 +67,7 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 description: "Virtually paints the shape from the bottom input with the color on the right input, or just outputs the input shape otherwise.",
                 regularImageBase64: painterBaseImage,
                 blueprintImageBase64: painterGhostImage,
-                tutorialImageBase64: painterBaseImage,
+                tutorialImageBase64: painterDemoImage,
             }
         ];
     }

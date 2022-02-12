@@ -7,8 +7,10 @@ import { enumMemoryType, MemoryComponent } from "../components/memory";
 
 import jkBaseImage from "../../res/sprites/buildings/memory_jk.png";
 import jkGhostImage from "../../res/sprites/blueprints/memory_jk.png";
+import jkDemoImage from "../../res/sprites/building_tutorials/memory_jk.png";
 import tBaseImage from "../../res/sprites/buildings/memory_t.png";
 import tGhostImage from "../../res/sprites/blueprints/memory_t.png";
+import tDemoImage from "../../res/sprites/building_tutorials/memory_t.png";
 
 export class MetaMemoryBuilding extends ModMetaBuilding {
     constructor() {
@@ -22,7 +24,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                 description: "Stores a boolean value based on which input was triggered last.",
                 regularImageBase64: jkBaseImage,
                 blueprintImageBase64: jkGhostImage,
-                tutorialImageBase64: jkBaseImage,
+                tutorialImageBase64: jkDemoImage,
             },
             {
                 variant: enumMemoryType.t,
@@ -30,7 +32,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                 description: "Toggles the output when the input is triggered.",
                 regularImageBase64: tBaseImage,
                 blueprintImageBase64: tGhostImage,
-                tutorialImageBase64: tBaseImage,
+                tutorialImageBase64: tDemoImage,
             },
         ];
     }

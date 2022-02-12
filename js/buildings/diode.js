@@ -7,6 +7,7 @@ import { DiodeComponent } from "../components/diode";
 
 import baseImage from "../../res/sprites/buildings/diode.png";
 import ghostImage from "../../res/sprites/blueprints/diode.png";
+import demoImage from "../../res/sprites/building_tutorials/diode.png";
 
 export class MetaDiodeBuilding extends ModMetaBuilding {
     constructor() {
@@ -20,7 +21,7 @@ export class MetaDiodeBuilding extends ModMetaBuilding {
                 description: "A simple one-way gate.",
                 regularImageBase64: baseImage,
                 blueprintImageBase64: ghostImage,
-                tutorialImageBase64: baseImage,
+                tutorialImageBase64: demoImage,
             },
         ];
     }
