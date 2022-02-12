@@ -34,6 +34,8 @@ export class SmartProcessorSystem extends GameSystemWithFilter {
                         slotComp.slots[2].value = bottomNetwork.currentValue;
                     } else if(isTopShape) {
                         slotComp.slots[2].value = topNetwork.currentValue;
+                    } else {
+                        slotComp.slots[2].value = null;
                     }
 
                     break;
@@ -58,6 +60,8 @@ export class SmartProcessorSystem extends GameSystemWithFilter {
                         slotComp.slots[2].value = this.root.shapeDefinitionMgr.getShapeItemFromDefinition(coloredShape);
                     } else if(isShape) {
                         slotComp.slots[2].value = shapeNetwork.currentValue;
+                    } else {
+                        slotComp.slots[2].value = null;
                     }
                     
                     break;
