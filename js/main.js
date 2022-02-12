@@ -1,6 +1,10 @@
 import { Mod } from "shapez/mods/mod";
-import { enumWireVariant } from "shapez/game/buildings/wire";
-import { MetaWireBuilding } from "shapez/game/buildings/wire";
+import { enumVirtualProcessorVariants, colors, MetaVirtualProcessorBuilding } from "shapez/game/buildings/virtual_processor";
+import { enumLogicGateType } from "shapez/game/components/logic_gate";
+import { MetaRotaterBuilding } from "shapez/game/buildings/rotater";
+import { Vector } from "shapez/core/vector";
+import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
+import { LogicGateSystem } from "shapez/game/systems/logic_gate";
 
 import { MetaAdderBuilding } from "./buildings/adder";
 import { MetaAdvancedProcessorBuilding } from "./buildings/advanced_processor";

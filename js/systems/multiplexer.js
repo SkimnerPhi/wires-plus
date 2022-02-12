@@ -21,6 +21,7 @@ export class MultiplexerSystem extends GameSystemWithFilter {
                     case enumMultiplexerType.muxer:
                         slotComp.slots[3].value = null;
                 }
+                continue;
             }
             const address = isTruthyItem(addressNetwork?.currentValue);
             switch (muxerComp.type) {
