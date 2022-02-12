@@ -8,7 +8,7 @@ import { enumMemoryType, MemoryComponent } from "../components/memory";
 import jkDemoImage from "../../res/sprites/building_tutorials/memory.png";
 import tDemoImage from "../../res/sprites/building_tutorials/memory-t.png";
 import simpleDemoImage from "../../res/sprites/building_tutorials/memory-simple.png";
-import writeEnableDemoImage from "../../res/sprites/building_tutorials/memory-writeEnable.png";
+import writeEnableDemoImage from "../../res/sprites/building_tutorials/memory-write_enable.png";
 
 export class MetaMemoryBuilding extends ModMetaBuilding {
     constructor() {
