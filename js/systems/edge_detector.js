@@ -1,6 +1,7 @@
 import { GameSystemWithFilter } from "shapez/game/game_system_with_filter";
 import { isTruthyItem } from "shapez/game/items/boolean_item";
 import { EdgeDetectorComponent, enumEdgeDetectorType } from "../components/edge_detector";
+import { castBool } from "../utils";
 
 export class EdgeDetectorSystem extends GameSystemWithFilter {
     constructor(root) {
@@ -39,7 +40,7 @@ export class EdgeDetectorSystem extends GameSystemWithFilter {
             }
 
             edgeComp.lastValue = inputValue;
-            slotComp.slots[1].value = output ? inputValue : null;
+            slotComp.slots[1].value = castBool(output);
         }
     }
 }
