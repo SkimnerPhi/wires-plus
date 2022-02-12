@@ -91,7 +91,7 @@ export class MemorySystem extends GameSystemWithFilter {
 
                     break;
                 }
-                case enumMemoryType.writeEnable: {
+                case enumMemoryType.write_enable: {
                     const iNetwork = slotComp.slots[0].linkedNetwork;
                     const weNetwork = slotComp.slots[1].linkedNetwork;
 

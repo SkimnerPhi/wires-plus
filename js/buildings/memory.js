@@ -35,7 +35,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                 tutorialImageBase64: simpleDemoImage,
             },
             {
-                variant: enumMemoryType.writeEnable,
+                variant: enumMemoryType.write_enable,
                 name: "Write-Enable Memory Cell",
                 description: "Stores the left input when the bottom input is enabled.",
                 tutorialImageBase64: writeEnableDemoImage,
@@ -50,7 +50,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
             defaultBuildingVariant,
             enumMemoryType.t,
             enumMemoryType.simple,
-            enumMemoryType.writeEnable,
+            enumMemoryType.write_enable,
         ];
     }
     getIsUnlocked(root) {
@@ -62,7 +62,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
     getDimensions(variant) {
         switch (variant) {
             case defaultBuildingVariant:
-            case enumMemoryType.writeEnable:
+            case enumMemoryType.write_enable:
                 return new Vector(2, 1);
             case enumMemoryType.t:
             case enumMemoryType.simple:
@@ -118,7 +118,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                     },
                 ]);
                 break;
-            case enumMemoryType.writeEnable:
+            case enumMemoryType.write_enable:
                 pinComp.setSlots([
                     {
                         pos: new Vector(0, 0),

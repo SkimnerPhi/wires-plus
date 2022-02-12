@@ -9,7 +9,7 @@ export const enumMemoryType = {
     jk: "jk",
     t: "t",
     simple: "simple",
-    writeEnable: "write_enable"
+    write_enable: "write_enable",
 };
 export class MemoryComponent extends Component {
     static getId() {
@@ -23,7 +23,7 @@ export class MemoryComponent extends Component {
     constructor({ type = enumMemoryType.jk, signal = null }) {
         super();
         this.type = type;
-        
+
         switch(type) {
             case enumMemoryType.jk:
             case enumMemoryType.t: {
@@ -31,7 +31,7 @@ export class MemoryComponent extends Component {
                 break;
             }
             case enumMemoryType.simple:
-            case enumMemoryType.writeEnable: {
+            case enumMemoryType.write_enable: {
                 this.signal = signal;
                 break;
             }
