@@ -5,8 +5,6 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { AdderComponent } from "../components/adder";
 
-import demoImage from "../../res/sprites/building_tutorials/adder.png";
-
 export class MetaAdderBuilding extends ModMetaBuilding {
     constructor() {
         super("adder");
@@ -17,7 +15,6 @@ export class MetaAdderBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "Adder",
                 description: "Add 3 booleans together and output the result (top) and carry (left).",
-                tutorialImageBase64: demoImage,
             },
         ];
     }

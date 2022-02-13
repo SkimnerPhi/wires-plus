@@ -5,11 +5,6 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumMemoryType, MemoryComponent } from "../components/memory";
 
-import jkDemoImage from "../../res/sprites/building_tutorials/memory.png";
-import tDemoImage from "../../res/sprites/building_tutorials/memory-t.png";
-import simpleDemoImage from "../../res/sprites/building_tutorials/memory-simple.png";
-import writeEnableDemoImage from "../../res/sprites/building_tutorials/memory-write_enable.png";
-
 export class MetaMemoryBuilding extends ModMetaBuilding {
     constructor() {
         super("memory");
@@ -20,25 +15,21 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "JK Flip-Flop",
                 description: "Stores a boolean value based on which input was triggered last.",
-                tutorialImageBase64: jkDemoImage,
             },
             {
                 variant: enumMemoryType.t,
                 name: "T Flip-Flop",
                 description: "Toggles the output when the input is triggered.",
-                tutorialImageBase64: tDemoImage,
             },
             {
                 variant: enumMemoryType.simple,
                 name: "Simple Memory Cell",
                 description: "Stores the last value input. Conflict resets the memory.",
-                tutorialImageBase64: simpleDemoImage,
             },
             {
                 variant: enumMemoryType.write_enable,
                 name: "Write-Enable Memory Cell",
                 description: "Stores the left input when the bottom input is enabled.",
-                tutorialImageBase64: writeEnableDemoImage,
             }
         ];
     }

@@ -1,0 +1,31 @@
+$buildings: (
+  adder,
+  advanced_processor,
+  advanced_processor-unmixer,
+  advanced_processor-stacker,
+  advanced_processor-painter,
+  diode,
+  memory,
+  memory-t,
+  memory-simple,
+  memory-write_enable,
+  multiplexer,
+  multiplexer-demuxer
+);
+
+@each $building in $buildings {
+    [data-icon="building_tutorials/#{$building}.png"] {
+        background-image: url("../res/sprites/building_tutorials/#{$building}.png") !important;
+    }
+}
+
+[data-icon="building_tutorials/virtual_processor-rotater_ccw"],
+[data-icon="building_tutorials/virtual_processor-rotater_180"] {
+    background-image: url("../res/sprites/building_tutorials/virtual_processor-rotater.png") !important;
+}
+
+[data-icon="building_tutorials/edge_detector"],
+[data-icon="building_tutorials/edge_detector-falling"],
+[data-icon="building_tutorials/edge_detector-change"] {
+    background-image: url("../res/sprites/building_tutorials/edge_detector.png") !important;
+}

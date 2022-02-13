@@ -5,8 +5,6 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumEdgeDetectorType, EdgeDetectorComponent } from "../components/edge_detector";
 
-import demoImage from "../../res/sprites/building_tutorials/edge_detector.png";
-
 export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
     constructor() {
         super("edge_detector");
@@ -17,19 +15,16 @@ export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "Rising Edge Detector",
                 description: "Pulses true when the input goes from low to high.",
-                tutorialImageBase64: demoImage,
             },
             {
                 variant: enumEdgeDetectorType.falling,
                 name: "Falling Edge Detector",
                 description: "Pulses true when the input goes from high to low.",
-                tutorialImageBase64: demoImage,
             },
             {
                 variant: enumEdgeDetectorType.change,
                 name: "Change Detector",
                 description: "Pulses true when the input changes.",
-                tutorialImageBase64: demoImage,
             },
         ];
     }
