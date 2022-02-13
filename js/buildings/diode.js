@@ -3,7 +3,7 @@ import { WiredPinsComponent, enumPinSlotType } from "shapez/game/components/wire
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
-import { DiodeComponent } from "../components/diode";
+import { DiodeComponent, enumDiodeType } from "../components/diode";
 
 export class MetaDiodeBuilding extends ModMetaBuilding {
     constructor() {
@@ -16,10 +16,18 @@ export class MetaDiodeBuilding extends ModMetaBuilding {
                 name: "Diode",
                 description: "A simple one-way gate.",
             },
+            {
+                variant: enumDiodeType.buffer,
+                name: "Buffer",
+                description: "Emits a boolean \"1\" if the input is truthy. (Truthy means shape, color, or boolean \"1\")",
+            }
         ];
     }
     getSilhouetteColor() {
         return "#C6B88F";
+    }
+    getAvailableVariants(root) {
+        return [defaultBuildingVariant, enumDiodeType.buffer];
     }
     getIsUnlocked(root) {
         return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_logic_gates);
@@ -32,6 +40,10 @@ export class MetaDiodeBuilding extends ModMetaBuilding {
     }
     getRenderPins() {
         return false;
+    }
+    updateVariants(entity, rotationVariant, variant) {
+        const diodeType = enumDiodeType[variant];
+        entity.components.Diode.type = diodeType;
     }
     setupEntityComponents(entity) {
         entity.addComponent(
@@ -51,6 +63,6 @@ export class MetaDiodeBuilding extends ModMetaBuilding {
             })
         );
 
-        entity.addComponent(new DiodeComponent());
+        entity.addComponent(new DiodeComponent({}));
     }
 }
