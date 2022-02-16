@@ -54,7 +54,7 @@ class ModImpl extends Mod {
             [enumVirtualProcessorVariants.unstacker]: enumLogicGateType.unstacker,
             [enumVirtualProcessorVariants.stacker]: enumLogicGateType.stacker,
             [enumVirtualProcessorVariants.painter]: enumLogicGateType.painter,
-        }
+        };
 
         this.modInterface.addVariantToExistingBuilding(
             MetaVirtualProcessorBuilding,
