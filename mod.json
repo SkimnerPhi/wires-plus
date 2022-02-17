@@ -1,7 +1,7 @@
 {
     "entry": "main.js",
     "id": "wires-plus",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "name": "Wires+",
     "author": "SkimnerPhi + TcePrepK",
     "description": "Adds commonly used wire designs as single buildings",
