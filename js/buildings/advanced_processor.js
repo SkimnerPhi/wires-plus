@@ -8,6 +8,7 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumVxMixerType, VirtualMixerComponent } from "../components/virtual_mixer";
 import { enumSmartProcessorType, SmartProcessorComponent } from "../components/smart_processor";
+import { generateMatrixRotations } from "shapez/core/utils";
 
 import mixerDemoImage from "../../res/sprites/building_tutorials/advanced_processor.png";
 import unmixerDemoImage from "../../res/sprites/building_tutorials/advanced_processor-unmixer.png";
@@ -16,10 +17,16 @@ import painterDemoImage from "../../res/sprites/building_tutorials/advanced_proc
 
 const colors = {
     [defaultBuildingVariant]: new MetaMixerBuilding().getSilhouetteColor(),
-    [enumVxMixerType.mixer]: new MetaMixerBuilding().getSilhouetteColor(),
     [enumVxMixerType.unmixer]: new MetaMixerBuilding().getSilhouetteColor(),
     [enumSmartProcessorType.stacker]: new MetaStackerBuilding().getSilhouetteColor(),
     [enumSmartProcessorType.painter]: new MetaPainterBuilding().getSilhouetteColor(),
+};
+
+const overlayMatrices = {
+    [defaultBuildingVariant]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 1, 1, 1]),
+    [enumVxMixerType.unmixer]: generateMatrixRotations([1, 1, 1, 1, 0, 1, 0, 1, 0]),
+    [enumSmartProcessorType.stacker]: generateMatrixRotations([1, 1, 1, 1, 0, 1, 1, 1, 1]),
+    [enumSmartProcessorType.painter]: generateMatrixRotations([1, 1, 1, 1, 0, 1, 1, 1, 1])
 };
 
 export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
@@ -59,6 +66,9 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
     }
     getAvailableVariants(root) {
         return [defaultBuildingVariant, enumVxMixerType.unmixer, enumSmartProcessorType.stacker, enumSmartProcessorType.painter];
+    }
+    getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant) {
+        return overlayMatrices[variant][rotation];
     }
     getIsUnlocked(root) {
         return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_virtual_processing);

@@ -4,6 +4,17 @@ import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { DiodeComponent, enumDiodeType } from "../components/diode";
+import { generateMatrixRotations } from "shapez/core/utils";
+
+const colors = {
+    [defaultBuildingVariant]: "#bc3a61",
+    [enumDiodeType.buffer]: "#f44184"
+};
+
+const overlayMatrices = {
+    [defaultBuildingVariant]: generateMatrixRotations([0, 1, 0, 0, 1, 0, 0, 1, 0]),
+    [enumDiodeType.buffer]: generateMatrixRotations([0, 1, 0, 0, 0, 0, 0, 1, 0])
+};
 
 export class MetaDiodeBuilding extends ModMetaBuilding {
     constructor() {
@@ -23,11 +34,14 @@ export class MetaDiodeBuilding extends ModMetaBuilding {
             }
         ];
     }
-    getSilhouetteColor() {
-        return "#C6B88F";
+    getSilhouetteColor(variant) {
+        return colors[variant];
     }
     getAvailableVariants(root) {
         return [defaultBuildingVariant, enumDiodeType.buffer];
+    }
+    getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant) {
+        return overlayMatrices[variant][rotation];
     }
     getIsUnlocked(root) {
         return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_logic_gates);

@@ -4,6 +4,12 @@ import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumMemoryType, MemoryComponent } from "../components/memory";
+import { generateMatrixRotations } from "shapez/core/utils";
+
+const overlayMatrices = {
+    [enumMemoryType.t]: generateMatrixRotations([0, 1, 0, 1, 0, 1, 1, 1, 1]),
+    [enumMemoryType.simple]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 1, 1, 1])
+};
 
 export class MetaMemoryBuilding extends ModMetaBuilding {
     constructor() {
@@ -43,6 +49,9 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
             enumMemoryType.simple,
             enumMemoryType.write_enable,
         ];
+    }
+    getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant) {
+        return overlayMatrices[variant]?.[rotation] ?? [1, 1, 1, 1, 1, 1, 1, 1, 1];
     }
     getIsUnlocked(root) {
         return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_logic_gates);
