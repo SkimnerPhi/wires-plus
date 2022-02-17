@@ -4,6 +4,7 @@ import { enumLogicGateType } from "shapez/game/components/logic_gate";
 import { enumDirection, Vector } from "shapez/core/vector";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { LogicGateSystem } from "shapez/game/systems/logic_gate";
+import { MetaWireBuilding, wireVariants } from "shapez/game/buildings/wire";
 
 import { MetaAdderBuilding } from "./buildings/adder";
 import { MetaAdvancedProcessorBuilding } from "./buildings/advanced_processor";
@@ -171,6 +172,15 @@ class ModImpl extends Mod {
                 const rotatedDefinitionCW = this.root.shapeDefinitionMgr.shapeActionRotate180(definition);
                 return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinitionCW);
             },
+        }));
+
+        this.modInterface.extendClass(MetaWireBuilding, ({ $old }) => ({
+            getSilhouetteColor(variant) {
+                return {
+                    [defaultBuildingVariant]: "#61ef6f",
+                    [wireVariants.second]: "#5fb2f1"
+                }[variant];
+            }
         }));
 
         this.signals.gameInitialized.add(root => {
