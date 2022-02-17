@@ -51,7 +51,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
         ];
     }
     getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant) {
-        return overlayMatrices[variant]?.[rotation] ?? [1, 1, 1, 1, 1, 1, 1, 1, 1];
+        return overlayMatrices[variant]?.[rotation];
     }
     getIsUnlocked(root) {
         return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_logic_gates);
