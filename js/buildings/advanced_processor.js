@@ -10,11 +10,6 @@ import { enumVxMixerType, VirtualMixerComponent } from "../components/virtual_mi
 import { enumSmartProcessorType, SmartProcessorComponent } from "../components/smart_processor";
 import { generateMatrixRotations } from "shapez/core/utils";
 
-import mixerDemoImage from "../../res/sprites/building_tutorials/advanced_processor.png";
-import unmixerDemoImage from "../../res/sprites/building_tutorials/advanced_processor-unmixer.png";
-import stackerDemoImage from "../../res/sprites/building_tutorials/advanced_processor-stacker.png";
-import painterDemoImage from "../../res/sprites/building_tutorials/advanced_processor-painter.png";
-
 const colors = {
     [defaultBuildingVariant]: new MetaMixerBuilding().getSilhouetteColor(),
     [enumVxMixerType.unmixer]: new MetaMixerBuilding().getSilhouetteColor(),
@@ -39,25 +34,21 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 variant: defaultBuildingVariant,
                 name: "Virtual Mixer",
                 description: "Compute a color from three boolean channels.",
-                tutorialImageBase64: mixerDemoImage,
             },
             {
                 variant: enumVxMixerType.unmixer,
                 name: "Virtual Unmixer",
                 description: "Split a color to three boolean channels.",
-                tutorialImageBase64: unmixerDemoImage,
             },
             {
                 variant: enumSmartProcessorType.stacker,
                 name: "Smart Stacker",
                 description: "Virtually stacks the right shape onto the left, or just outputs the input shape otherwise.",
-                tutorialImageBase64: stackerDemoImage,
             },
             {
                 variant: enumSmartProcessorType.painter,
                 name: "Smart Painter",
                 description: "Virtually paints the shape from the bottom input with the color on the right input, or just outputs the input shape otherwise.",
-                tutorialImageBase64: painterDemoImage,
             }
         ];
     }
