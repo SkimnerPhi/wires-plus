@@ -1,0 +1,175 @@
+import { generateMatrixRotations } from "shapez/core/utils";
+import { Vector, enumDirection } from "shapez/core/vector";
+import { MetaCutterBuilding } from "shapez/game/buildings/cutter";
+import { MetaPainterBuilding } from "shapez/game/buildings/painter";
+import { MetaRotaterBuilding } from "shapez/game/buildings/rotater";
+import { MetaStackerBuilding } from "shapez/game/buildings/stacker";
+import { enumVirtualProcessorVariants, MetaVirtualProcessorBuilding } from "shapez/game/buildings/virtual_processor";
+import { enumLogicGateType } from "shapez/game/components/logic_gate";
+import { enumPinSlotType } from "shapez/game/components/wired_pins";
+import { ShapeItem } from "shapez/game/items/shape_item";
+import { defaultBuildingVariant } from "shapez/game/meta_building";
+import { LogicGateSystem } from "shapez/game/systems/logic_gate";
+
+export function patchLogicGate() {
+    enumVirtualProcessorVariants.rotater_ccw = "rotater_ccw";
+    enumVirtualProcessorVariants.rotater_180 = "rotater_180";
+    enumLogicGateType.rotater_ccw = "rotater_ccw";
+    enumLogicGateType.rotater_180 = "rotater_180";
+    const enumVariantToGate = {
+        [defaultBuildingVariant]: enumLogicGateType.cutter,
+        [enumVirtualProcessorVariants.rotater]: enumLogicGateType.rotater,
+        [enumVirtualProcessorVariants.rotater_ccw]: enumLogicGateType.rotater_ccw,
+        [enumVirtualProcessorVariants.rotater_180]: enumLogicGateType.rotater_180,
+        [enumVirtualProcessorVariants.unstacker]: enumLogicGateType.unstacker,
+        [enumVirtualProcessorVariants.stacker]: enumLogicGateType.stacker,
+        [enumVirtualProcessorVariants.painter]: enumLogicGateType.painter,
+    };
+
+    const colors = {
+        [defaultBuildingVariant]: new MetaCutterBuilding().getSilhouetteColor(),
+        [enumVirtualProcessorVariants.rotater]: new MetaRotaterBuilding().getSilhouetteColor(),
+        [enumVirtualProcessorVariants.rotater_ccw]: new MetaRotaterBuilding().getSilhouetteColor(),
+        [enumVirtualProcessorVariants.rotater_180]: new MetaRotaterBuilding().getSilhouetteColor(),
+        [enumVirtualProcessorVariants.unstacker]: new MetaStackerBuilding().getSilhouetteColor(),
+        [enumVirtualProcessorVariants.stacker]: new MetaStackerBuilding().getSilhouetteColor(),
+        [enumVirtualProcessorVariants.painter]: new MetaPainterBuilding().getSilhouetteColor(),
+    };
+
+    const overlayMatrices = {
+        [enumVirtualProcessorVariants.rotater]: generateMatrixRotations([0, 1, 1, 1, 1, 0, 0, 1, 1]),
+        [enumVirtualProcessorVariants.rotater_ccw]: generateMatrixRotations([1, 1, 0, 0, 1, 1, 1, 1, 0]),
+        [enumVirtualProcessorVariants.rotater_180]: generateMatrixRotations([1, 1, 0, 1, 1, 1, 0, 1, 1]),
+    };
+
+    this.modInterface.addVariantToExistingBuilding(
+        MetaVirtualProcessorBuilding,
+        enumVirtualProcessorVariants.rotater_ccw,
+        {
+            name: "Virtual Rotator (CCW)",
+            description: "Virtually rotates the shape clockwise.",
+            isUnlocked() {
+                return true;
+            }
+        }
+    );
+    this.modInterface.addVariantToExistingBuilding(
+        MetaVirtualProcessorBuilding,
+        enumVirtualProcessorVariants.rotater_180,
+        {
+            name: "Virtual Rotator (180°)",
+            description: "Virtually rotates the shape 180 degrees.",
+            isUnlocked() {
+                return true;
+            }
+        }
+    );
+    this.modInterface.extendClass(MetaVirtualProcessorBuilding, ({ $old }) => ({
+        updateVariants(entity, rotationVariant, variant) {
+            const gateType = enumVariantToGate[variant];
+            entity.components.LogicGate.type = gateType;
+            const pinComp = entity.components.WiredPins;
+            switch (gateType) {
+                case enumLogicGateType.cutter:
+                case enumLogicGateType.unstacker: {
+                    pinComp.setSlots([
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.left,
+                            type: enumPinSlotType.logicalEjector,
+                        },
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.right,
+                            type: enumPinSlotType.logicalEjector,
+                        },
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.bottom,
+                            type: enumPinSlotType.logicalAcceptor,
+                        },
+                    ]);
+                    break;
+                }
+                case enumLogicGateType.rotater:
+                case enumLogicGateType.rotater_ccw:
+                case enumLogicGateType.rotater_180: {
+                    pinComp.setSlots([
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.top,
+                            type: enumPinSlotType.logicalEjector,
+                        },
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.bottom,
+                            type: enumPinSlotType.logicalAcceptor,
+                        },
+                    ]);
+                    break;
+                }
+                case enumLogicGateType.stacker:
+                case enumLogicGateType.painter: {
+                    pinComp.setSlots([
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.top,
+                            type: enumPinSlotType.logicalEjector,
+                        },
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.bottom,
+                            type: enumPinSlotType.logicalAcceptor,
+                        },
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.right,
+                            type: enumPinSlotType.logicalAcceptor,
+                        },
+                    ]);
+                    break;
+                }
+                default:
+                    assertAlways("unknown logic gate type: " + gateType);
+            }
+        },
+        getSilhouetteColor(variant) {
+            return colors[variant];
+        },
+        getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant) {
+            return overlayMatrices[variant]?.[rotation];
+        }
+    }));
+    this.modInterface.extendClass(LogicGateSystem, ({ $old }) => ({
+        compute_ROTATE_CCW(parameters) {
+            const item = parameters[0];
+            if (!item || item.getItemType() !== "shape") {
+                // Not a shape
+                return null;
+            }
+
+            const definition = /** @type {ShapeItem} */ (item).definition;
+            const rotatedDefinitionCW = this.root.shapeDefinitionMgr.shapeActionRotateCCW(definition);
+            return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinitionCW);
+        },
+        compute_ROTATE_180(parameters) {
+            const item = parameters[0];
+            if (!item || item.getItemType() !== "shape") {
+                // Not a shape
+                return null;
+            }
+
+            const definition = /** @type {ShapeItem} */ (item).definition;
+            const rotatedDefinitionCW = this.root.shapeDefinitionMgr.shapeActionRotate180(definition);
+            return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinitionCW);
+        },
+    }));
+
+    this.signals.gameInitialized.add(root => {
+        const rCCW = root.systemMgr.systems.logicGate.compute_ROTATE_CCW.bind(root.systemMgr.systems.logicGate);
+        root.systemMgr.systems.logicGate.boundOperations[enumLogicGateType.rotater_ccw] = rCCW;
+
+        const r180 = root.systemMgr.systems.logicGate.compute_ROTATE_180.bind(root.systemMgr.systems.logicGate);
+        root.systemMgr.systems.logicGate.boundOperations[enumLogicGateType.rotater_180] = r180;
+    });
+}

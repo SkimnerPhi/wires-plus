@@ -1,10 +1,6 @@
 import { Mod } from "shapez/mods/mod";
-import { enumVirtualProcessorVariants, MetaVirtualProcessorBuilding } from "shapez/game/buildings/virtual_processor";
-import { enumLogicGateType } from "shapez/game/components/logic_gate";
-import { enumDirection, Vector } from "shapez/core/vector";
-import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
-import { LogicGateSystem } from "shapez/game/systems/logic_gate";
-import { MetaWireBuilding, wireVariants } from "shapez/game/buildings/wire";
+import { patchLogicGate } from "./patches/logic_gate";
+import { patchWire } from "./patches/wire";
 
 import { MetaAdderBuilding } from "./buildings/adder";
 import { MetaAdvancedProcessorBuilding } from "./buildings/advanced_processor";
@@ -37,159 +33,11 @@ import memoryIcon from "../res/sprites/building_icons/memory.png";
 import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
 
 import META from "../mod.json";
-import { enumPinSlotType } from "shapez/game/components/wired_pins";
-import { ShapeItem } from "shapez/game/items/shape_item";
-import { defaultBuildingVariant } from "shapez/game/meta_building";
 
 class ModImpl extends Mod {
     init() {
-        enumVirtualProcessorVariants.rotaterCCW = "rotater_ccw";
-        enumVirtualProcessorVariants.rotater180 = "rotater_180";
-        enumLogicGateType.rotaterCCW = "rotater_ccw";
-        enumLogicGateType.rotater180 = "rotater_180";
-        const enumVariantToGate = {
-            [defaultBuildingVariant]: enumLogicGateType.cutter,
-            [enumVirtualProcessorVariants.rotater]: enumLogicGateType.rotater,
-            [enumVirtualProcessorVariants.rotaterCCW]: enumLogicGateType.rotaterCCW,
-            [enumVirtualProcessorVariants.rotater180]: enumLogicGateType.rotater180,
-            [enumVirtualProcessorVariants.unstacker]: enumLogicGateType.unstacker,
-            [enumVirtualProcessorVariants.stacker]: enumLogicGateType.stacker,
-            [enumVirtualProcessorVariants.painter]: enumLogicGateType.painter,
-        };
-
-        this.modInterface.addVariantToExistingBuilding(
-            MetaVirtualProcessorBuilding,
-            enumVirtualProcessorVariants.rotaterCCW,
-            {
-                name: "Virtual Rotator (CCW)",
-                description: "Virtually rotates the shape clockwise.",
-                isUnlocked() {
-                    return true;
-                }
-            }
-        );
-        this.modInterface.addVariantToExistingBuilding(
-            MetaVirtualProcessorBuilding,
-            enumVirtualProcessorVariants.rotater180,
-            {
-                name: "Virtual Rotator (180°)",
-                description: "Virtually rotates the shape 180 degrees.",
-                isUnlocked() {
-                    return true;
-                }
-            }
-        );
-        this.modInterface.extendClass(MetaVirtualProcessorBuilding, ({ $old }) => ({
-            updateVariants(entity, rotationVariant, variant) {
-                const gateType = enumVariantToGate[variant];
-                entity.components.LogicGate.type = gateType;
-                const pinComp = entity.components.WiredPins;
-                switch (gateType) {
-                    case enumLogicGateType.cutter:
-                    case enumLogicGateType.unstacker: {
-                        pinComp.setSlots([
-                            {
-                                pos: new Vector(0, 0),
-                                direction: enumDirection.left,
-                                type: enumPinSlotType.logicalEjector,
-                            },
-                            {
-                                pos: new Vector(0, 0),
-                                direction: enumDirection.right,
-                                type: enumPinSlotType.logicalEjector,
-                            },
-                            {
-                                pos: new Vector(0, 0),
-                                direction: enumDirection.bottom,
-                                type: enumPinSlotType.logicalAcceptor,
-                            },
-                        ]);
-                        break;
-                    }
-                    case enumLogicGateType.rotater:
-                    case enumLogicGateType.rotaterCCW:
-                    case enumLogicGateType.rotater180: {
-                        pinComp.setSlots([
-                            {
-                                pos: new Vector(0, 0),
-                                direction: enumDirection.top,
-                                type: enumPinSlotType.logicalEjector,
-                            },
-                            {
-                                pos: new Vector(0, 0),
-                                direction: enumDirection.bottom,
-                                type: enumPinSlotType.logicalAcceptor,
-                            },
-                        ]);
-                        break;
-                    }
-                    case enumLogicGateType.stacker:
-                    case enumLogicGateType.painter: {
-                        pinComp.setSlots([
-                            {
-                                pos: new Vector(0, 0),
-                                direction: enumDirection.top,
-                                type: enumPinSlotType.logicalEjector,
-                            },
-                            {
-                                pos: new Vector(0, 0),
-                                direction: enumDirection.bottom,
-                                type: enumPinSlotType.logicalAcceptor,
-                            },
-                            {
-                                pos: new Vector(0, 0),
-                                direction: enumDirection.right,
-                                type: enumPinSlotType.logicalAcceptor,
-                            },
-                        ]);
-                        break;
-                    }
-                    default:
-                        assertAlways("unknown logic gate type: " + gateType);
-                }
-            }
-        }));
-        this.modInterface.extendClass(LogicGateSystem, ({ $old }) => ({
-            compute_ROTATE_CCW(parameters) {
-                const item = parameters[0];
-                if (!item || item.getItemType() !== "shape") {
-                    // Not a shape
-                    return null;
-                }
-    
-                const definition = /** @type {ShapeItem} */ (item).definition;
-                const rotatedDefinitionCW = this.root.shapeDefinitionMgr.shapeActionRotateCCW(definition);
-                return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinitionCW);
-            },
-            compute_ROTATE_180(parameters) {
-                const item = parameters[0];
-                if (!item || item.getItemType() !== "shape") {
-                    // Not a shape
-                    return null;
-                }
-    
-                const definition = /** @type {ShapeItem} */ (item).definition;
-                const rotatedDefinitionCW = this.root.shapeDefinitionMgr.shapeActionRotate180(definition);
-                return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinitionCW);
-            },
-        }));
-
-        this.modInterface.extendClass(MetaWireBuilding, ({ $old }) => ({
-            getSilhouetteColor(variant) {
-                return {
-                    [defaultBuildingVariant]: "#61ef6f",
-                    [wireVariants.second]: "#5fb2f1"
-                }[variant];
-            }
-        }));
-
-        this.signals.gameInitialized.add(root => {
-            const rCCW = root.systemMgr.systems.logicGate.compute_ROTATE_CCW.bind(root.systemMgr.systems.logicGate);
-            root.systemMgr.systems.logicGate.boundOperations[enumLogicGateType.rotaterCCW] = rCCW;
-
-            const r180 = root.systemMgr.systems.logicGate.compute_ROTATE_180.bind(root.systemMgr.systems.logicGate);
-            root.systemMgr.systems.logicGate.boundOperations[enumLogicGateType.rotater180] = r180;
-        });
+        patchLogicGate.call(this);
+        patchWire.call(this);
 
         this.modInterface.registerComponent(AdderComponent);
         this.modInterface.registerComponent(DiodeComponent);
