@@ -19,7 +19,6 @@ export class DiodeSystem extends GameSystemWithFilter {
                 slotComp.slots[1].value = null;
             } else {
                 let out;
-                console.log(diodeComp.type);
                 switch (diodeComp.type) {
                     case enumDiodeType.diode:
                         out = inputNetwork.currentValue;
