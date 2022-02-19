@@ -11,28 +11,30 @@ $buildings: (
   memory-simple,
   memory-write_enable,
   multiplexer,
-  multiplexer-demuxer
+  multiplexer-demuxer,
+  wire_tunnel-forward,
+  wire_tunnel-turn,
+  wire_tunnel-double_turn
 );
 
 @each $building in $buildings {
     [data-icon="building_tutorials/#{$building}.png"] {
-        background-image: url("../res/sprites/building_tutorials/#{$building}.png") !important;
+        background-image: url("../building_tutorials/#{$building}.png") !important;
     }
 }
 
-[data-icon="building_tutorials/virtual_processor-rotater_ccw"],
-[data-icon="building_tutorials/virtual_processor-rotater_180"] {
-    background-image: url("../res/sprites/building_tutorials/virtual_processor-rotater.png") !important;
+[data-icon="building_tutorials/virtual_processor-rotater_ccw.png"],
+[data-icon="building_tutorials/virtual_processor-rotater_180.png"] {
+    background-image: url("../building_tutorials/virtual_processor-rotater.png") !important;
 }
 
-[data-icon="building_tutorials/edge_detector"],
-[data-icon="building_tutorials/edge_detector-falling"],
-[data-icon="building_tutorials/edge_detector-change"] {
-    background-image: url("../res/sprites/building_tutorials/edge_detector.png") !important;
+[data-icon="building_tutorials/edge_detector.png"],
+[data-icon="building_tutorials/edge_detector-falling.png"],
+[data-icon="building_tutorials/edge_detector-change.png"] {
+    background-image: url("../building_tutorials/edge_detector.png") !important;
 }
-/*
-[data-icon="building_tutorials/wire-third"],
-[data-icon="building_tutorials/wire-fourth"] {
-    background-image: url("../res/sprites/building_tutorials/wire-variants.png") !important;
+
+[data-icon="building_tutorials/wire-third.png"],
+[data-icon="building_tutorials/wire-fourth.png"] {
+    background-image: url("../building_tutorials/wire-second.png") !important;
 }
-*/
