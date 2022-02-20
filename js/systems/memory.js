@@ -69,7 +69,6 @@ export class MemorySystem extends GameSystemWithFilter {
                     if (tValue) {
                         memComp.signal = castBool(!isTrueItem(memComp.signal));
                     }
-
                     slotComp.slots[1].value = memComp.signal;
 
                     break;
@@ -86,8 +85,8 @@ export class MemorySystem extends GameSystemWithFilter {
 
                     if (iValue) {
                         memComp.signal = iValue;
-                        slotComp.slots[1].value = memComp.signal;
                     }
+                    slotComp.slots[1].value = memComp.signal;
 
                     break;
                 }
@@ -101,12 +100,11 @@ export class MemorySystem extends GameSystemWithFilter {
                             slotComp.slots[2].value = null;
                             continue;
                         }
-
                         memComp.signal = iNetwork?.currentValue;
-                        slotComp.slots[2].value = memComp.signal;
-
-                        break;
                     }
+                    slotComp.slots[2].value = memComp.signal;
+                    
+                    break;
                 }
             }
         }

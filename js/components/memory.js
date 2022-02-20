@@ -1,5 +1,5 @@
 import { Component } from "shapez/game/component";
-import { isTruthyItem } from "shapez/game/items/boolean_item";
+import { BOOL_FALSE_SINGLETON, isTruthyItem } from "shapez/game/items/boolean_item";
 import { typeItemSingleton } from "shapez/game/item_resolver";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { castBool } from "../utils";
@@ -33,6 +33,21 @@ export class MemoryComponent extends Component {
             case enumMemoryType.simple:
             case enumMemoryType.write_enable: {
                 this.signal = signal;
+                break;
+            }
+        }
+    }
+
+    clear() {
+        switch(this.type) {
+            case enumMemoryType.jk:
+            case enumMemoryType.t: {
+                this.signal = BOOL_FALSE_SINGLETON;
+                break;
+            }
+            case enumMemoryType.simple:
+            case enumMemoryType.write_enable: {
+                this.signal = null;
                 break;
             }
         }
