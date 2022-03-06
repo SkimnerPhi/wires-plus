@@ -4,6 +4,7 @@ import { wireVariants, MetaWireBuilding, arrayWireRotationVariantToType } from "
 import { enumWireVariant, enumWireType } from "shapez/game/components/wire";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
+import { isModSafeRewardUnlocked } from "../utils";
 
 export function patchWire() {
     const addToEnum = {
@@ -27,7 +28,7 @@ export function patchWire() {
             name: "Wire",
             description: "Transfers signals, which can be items, colours or booleans (1 or 0). Differently-coloured wires do not connect to each other.",
             isUnlocked(root) {
-                return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_freeplay);
+                return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_freeplay);
             },
             rotationVariants: [0, 1, 2, 3],
         }
@@ -39,7 +40,7 @@ export function patchWire() {
             name: "Wire",
             description: "Transfers signals, which can be items, colours or booleans (1 or 0). Differently-coloured wires do not connect to each other.",
             isUnlocked(root) {
-                return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_freeplay);
+                return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_freeplay);
             },
             rotationVariants: [0, 1, 2, 3],
         }
