@@ -5,6 +5,7 @@ export const enumSmartProcessorType = {
     [defaultBuildingVariant]: "stacker",
     stacker: "stacker",
     painter: "painter",
+    nipper: "nipper",
 };
 
 export class SmartProcessorComponent extends Component {

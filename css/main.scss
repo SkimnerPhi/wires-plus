@@ -4,6 +4,7 @@ $buildings: (
   advanced_processor-unmixer,
   advanced_processor-stacker,
   advanced_processor-painter,
+  advanced_processor-nipper,
   advanced_processor-adder,
   advanced_processor-subtractor,
   diode,
@@ -14,6 +15,8 @@ $buildings: (
   memory-write_enable,
   multiplexer,
   multiplexer-demuxer,
+  virtual_processor-combiner,
+  virtual_processor-compressor,
   wire_tunnel-forward,
   wire_tunnel-turn,
   wire_tunnel-double_turn

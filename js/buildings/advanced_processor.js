@@ -51,6 +51,11 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 description: "Virtually paints the shape from the bottom input with the color on the right input, or just outputs the input shape otherwise.",
             },
             {
+                variant: enumSmartProcessorType.nipper,
+                name: "Nipper",
+                description: "Virtually removes the top left corner from the input shape and outputs the rest."
+            },
+            {
                 variant: enumColorProcessorType.adder,
                 name: "Color Adder",
                 description: "Compute a color by adding together two input colors.",
@@ -71,6 +76,7 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
             enumVxMixerType.unmixer,
             enumSmartProcessorType.stacker,
             enumSmartProcessorType.painter,
+            enumSmartProcessorType.nipper,
             enumColorProcessorType.adder,
             enumColorProcessorType.subtractor,
         ];
@@ -188,6 +194,32 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                     {
                         pos: new Vector(0, 0),
                         direction: enumDirection.right,
+                        type: enumPinSlotType.logicalAcceptor,
+                    },
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.top,
+                        type: enumPinSlotType.logicalEjector,
+                    },
+                ]);
+                break;
+            }
+            case enumSmartProcessorType.nipper: {
+                if(entity.components.VirtualMixer) {
+                    entity.removeComponent(VirtualMixerComponent);
+                }
+                if(entity.components.ColorProcessor) {
+                    entity.removeComponent(ColorProcessorComponent);
+                }
+                if(!entity.components.SmartProcessor) {
+                    entity.addComponent(new SmartProcessorComponent({}));
+                }
+                const smartType = enumSmartProcessorType[variant];
+                entity.components.SmartProcessor.type = smartType;
+                pinComp.setSlots([
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.bottom,
                         type: enumPinSlotType.logicalAcceptor,
                     },
                     {

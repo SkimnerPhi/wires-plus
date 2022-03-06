@@ -8,8 +8,11 @@ import { enumVirtualProcessorVariants, MetaVirtualProcessorBuilding } from "shap
 import { enumLogicGateType } from "shapez/game/components/logic_gate";
 import { enumPinSlotType } from "shapez/game/components/wired_pins";
 import { ShapeItem } from "shapez/game/items/shape_item";
+import { itemResolverSingleton } from "shapez/game/item_resolver";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { LogicGateSystem } from "shapez/game/systems/logic_gate";
+import { isModLoaded } from "../utils";
+import { combineDefinitions, shapeActionCompress } from "../compat/shapez_industries";
 
 export function patchLogicGate() {
     const addToEnum = {
@@ -18,6 +21,7 @@ export function patchLogicGate() {
     };
     Object.assign(enumVirtualProcessorVariants, addToEnum);
     Object.assign(enumLogicGateType, addToEnum);
+
 
     const enumVariantToGate = {
         [defaultBuildingVariant]: enumLogicGateType.cutter,
@@ -45,6 +49,28 @@ export function patchLogicGate() {
         [enumVirtualProcessorVariants.rotater_180]: generateMatrixRotations([1, 1, 0, 1, 1, 1, 0, 1, 1]),
     };
 
+    if(isModLoaded("shapez-industries")) {
+        const addVariants = {
+            combiner: "combiner",
+            compressor: "compressor",
+        };
+        Object.assign(enumVirtualProcessorVariants, addVariants);
+        Object.assign(enumLogicGateType, addVariants);
+        Object.assign(enumVariantToGate, addVariants);
+
+        const addColors = {
+            [enumVirtualProcessorVariants.combiner]: "#0b8005",
+            [enumVirtualProcessorVariants.compressor]: "#0b8005",
+        };
+        Object.assign(colors, addColors);
+
+        const addMatrices = {
+            [enumVirtualProcessorVariants.combiner]: generateMatrixRotations([1, 1, 1, 1, 1, 1, 1, 1, 1]),
+            [enumVirtualProcessorVariants.compressor]: generateMatrixRotations([1, 1, 1, 0, 1, 0, 1, 1, 1]),
+        };
+        Object.assign(overlayMatrices, addMatrices);
+    }
+
     this.modInterface.addVariantToExistingBuilding(
         MetaVirtualProcessorBuilding,
         enumVirtualProcessorVariants.rotater_ccw,
@@ -67,6 +93,31 @@ export function patchLogicGate() {
             }
         }
     );
+    if(isModLoaded("shapez-industries")) {
+        this.modInterface.addVariantToExistingBuilding(
+            MetaVirtualProcessorBuilding,
+            enumVirtualProcessorVariants.combiner,
+            {
+                name: "Virtual Combiner",
+                description: "Virtually merges two shapes into one combined shape.",
+                isUnlocked(root) {
+                    return root.hubGoals.isRewardUnlocked("reward_shape_combiner");
+                }
+            }
+        );
+        this.modInterface.addVariantToExistingBuilding(
+            MetaVirtualProcessorBuilding,
+            enumVirtualProcessorVariants.compressor,
+            {
+                name: "Virtual Smelter",
+                description: "Virtually compresses shape layers into one. Removes color while processing.",
+                isUnlocked(root) {
+                    return root.hubGoals.isRewardUnlocked("reward_shape_compressor");
+                }
+            }
+        );
+    }
+
     this.modInterface.extendClass(MetaVirtualProcessorBuilding, ({ $old }) => ({
         updateVariants(entity, rotationVariant, variant) {
             const gateType = enumVariantToGate[variant];
@@ -96,7 +147,8 @@ export function patchLogicGate() {
                 }
                 case enumLogicGateType.rotater:
                 case enumLogicGateType.rotater_ccw:
-                case enumLogicGateType.rotater_180: {
+                case enumLogicGateType.rotater_180:
+                case enumLogicGateType.compressor: {
                     pinComp.setSlots([
                         {
                             pos: new Vector(0, 0),
@@ -132,6 +184,26 @@ export function patchLogicGate() {
                     ]);
                     break;
                 }
+                case enumLogicGateType.combiner: {
+                    pinComp.setSlots([
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.top,
+                            type: enumPinSlotType.logicalEjector,
+                        },
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.left,
+                            type: enumPinSlotType.logicalAcceptor,
+                        },
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.right,
+                            type: enumPinSlotType.logicalAcceptor,
+                        },
+                    ]);
+                    break;
+                }
                 default:
                     assertAlways("unknown logic gate type: " + gateType);
             }
@@ -143,7 +215,7 @@ export function patchLogicGate() {
             return overlayMatrices[variant]?.[rotation];
         }
     }));
-    this.modInterface.extendClass(LogicGateSystem, ({ $old }) => ({
+    const toExtend = {
         compute_ROTATE_CCW(parameters) {
             const item = parameters[0];
             if (!item || item.getItemType() !== "shape") {
@@ -166,7 +238,37 @@ export function patchLogicGate() {
             const rotatedDefinitionCW = this.root.shapeDefinitionMgr.shapeActionRotate180(definition);
             return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(rotatedDefinitionCW);
         },
-    }));
+    };
+    if(isModLoaded("shapez-industries")) {
+        toExtend.compute_COMBINE = function(parameters) {
+            const first = parameters[0];
+            if (!first || first.getItemType() !== "shape") {
+                return null;
+            }
+
+            const second = parameters[1];
+            if (!second || second.getItemType() !== "shape") {
+                return null;
+            }
+
+            const firstDefinition = first.definition;
+            const secondDefinition = second.definition;
+            const combinedDefinition = combineDefinitions(firstDefinition, secondDefinition);
+            return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(combinedDefinition);
+        };
+        toExtend.compute_COMPRESS = function(parameters) {
+            const item = parameters[0];
+            if (!item || item.getItemType() !== "shape") {
+                return null;
+            }
+
+            const definition = item.definition;
+            const compressedDefinition = shapeActionCompress(this.root, definition);
+
+            return this.root.shapeDefinitionMgr.getShapeItemFromDefinition(compressedDefinition);
+        };
+    }
+    this.modInterface.extendClass(LogicGateSystem, ({ $old }) => toExtend);
 
     this.signals.gameInitialized.add(root => {
         const rCCW = root.systemMgr.systems.logicGate.compute_ROTATE_CCW.bind(root.systemMgr.systems.logicGate);
@@ -174,5 +276,13 @@ export function patchLogicGate() {
 
         const r180 = root.systemMgr.systems.logicGate.compute_ROTATE_180.bind(root.systemMgr.systems.logicGate);
         root.systemMgr.systems.logicGate.boundOperations[enumLogicGateType.rotater_180] = r180;
+
+        if(isModLoaded("shapez-industries")) {
+            const siCombiner = root.systemMgr.systems.logicGate.compute_COMBINE.bind(root.systemMgr.systems.logicGate);
+            root.systemMgr.systems.logicGate.boundOperations[enumLogicGateType.combiner] = siCombiner;
+            
+            const siCompressor = root.systemMgr.systems.logicGate.compute_COMPRESS.bind(root.systemMgr.systems.logicGate);
+            root.systemMgr.systems.logicGate.boundOperations[enumLogicGateType.compressor] = siCompressor;
+        }
     });
 }

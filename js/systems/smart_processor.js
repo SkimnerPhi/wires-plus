@@ -66,6 +66,25 @@ export class SmartProcessorSystem extends GameSystemWithFilter {
                     
                     break;
                 }
+                case enumSmartProcessorType.nipper: {
+                    const shapeNetwork = slotComp.slots[0].linkedNetwork;
+
+                    if(!shapeNetwork || shapeNetwork.valueConflict) {
+                        slotComp.slots[1].value = null;
+                        break;
+                    }
+
+                    const isShape = shapeNetwork?.currentValue?.getItemType() === "shape";
+                    if(!isShape) {
+                        slotComp.slots[1].value = null;
+                        break;
+                    }
+
+                    const shapeDef = shapeNetwork.currentValue.definition;
+                    const nippedDef = shapeDef.cloneFilteredByQuadrants([1, 2, 3]);
+                    slotComp.slots[1].value = this.root.shapeDefinitionMgr.getShapeItemFromDefinition(nippedDef);
+                    break;
+                }
             }
         }
     }
