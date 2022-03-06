@@ -2,19 +2,15 @@ import { generateMatrixRotations } from "shapez/core/utils";
 import { enumDirectionToVector, Vector, enumInvertedDirections, enumDirection } from "shapez/core/vector";
 import { MetaWireTunnelBuilding } from "shapez/game/buildings/wire_tunnel";
 import { Component } from "shapez/game/component";
+import { WireTunnelComponent } from "shapez/game/components/wire_tunnel";
 import { GameLogic } from "shapez/game/logic";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { WireSystem } from "shapez/game/systems/wire";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
+import { enumWireInsulatorVariants, WireInsulatorComponent } from "../components/wire_insulator";
+import { isModSafeRewardUnlocked } from "../utils";
 
 export function patchWireTunnel() {
-    const enumWireTunnelVariants = {
-        [defaultBuildingVariant]: defaultBuildingVariant,
-        forward: "forward",
-        turn: "turn",
-        double_turn: "double_turn",
-    };
-
     const overlayMatrices = {
         [defaultBuildingVariant]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 0, 1, 0]),
         forward: generateMatrixRotations([0, 1, 0, 0, 1, 0, 0, 1, 0]),
@@ -47,34 +43,34 @@ export function patchWireTunnel() {
 
     this.modInterface.addVariantToExistingBuilding(
         MetaWireTunnelBuilding,
-        enumWireTunnelVariants.forward,
+        enumWireInsulatorVariants.forward,
         {
             name: "Wire Insulator",
             description: "Prevents a wire from connecting to adjacent wires.",
             isUnlocked(root) {
-                return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_freeplay);
+                return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_freeplay);
             }
         }
     );
     this.modInterface.addVariantToExistingBuilding(
         MetaWireTunnelBuilding,
-        enumWireTunnelVariants.turn,
+        enumWireInsulatorVariants.turn,
         {
             name: "Wire Insulator",
             description: "Prevents a wire from connecting to adjacent wires.",
             isUnlocked(root) {
-                return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_freeplay);
+                return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_freeplay);
             }
         }
     );
     this.modInterface.addVariantToExistingBuilding(
         MetaWireTunnelBuilding,
-        enumWireTunnelVariants.double_turn,
+        enumWireInsulatorVariants.double_turn,
         {
             name: "Wire Insulator",
             description: "Prevents two wires from connecting to adjacent wires.",
             isUnlocked(root) {
-                return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_freeplay);
+                return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_freeplay);
             }
         }
     );
@@ -88,20 +84,33 @@ export function patchWireTunnel() {
         },
     }));
 
-    shapez.WireTunnelComponent = class extends Component {
-        static getId() {
-            return "WireTunnel";
-        }
-        constructor(payload) {
-            super();
-            this.type = payload?.type ?? defaultBuildingVariant;
-            this.linkedNetworks = [];
-        }
-    }
     this.modInterface.extendClass(MetaWireTunnelBuilding, ({ $old }) => ({
         updateVariants(entity, rotationVariant, variant) {
-            const tunnelType = enumWireTunnelVariants[variant];
-            entity.components.WireTunnel.type = tunnelType ?? defaultBuildingVariant;
+            const tunnelType = enumWireInsulatorVariants[variant];
+            switch(tunnelType) {
+                case enumWireInsulatorVariants.forward:
+                case enumWireInsulatorVariants.turn:
+                case enumWireInsulatorVariants.double_turn: {
+                    if (entity.components.WireTunnel) {
+                        entity.removeComponent(WireTunnelComponent);
+                    }
+                    if (!entity.components.WireInsulator) {
+                        entity.addComponent(new WireInsulatorComponent({}));
+                    }
+                    entity.components.WireInsulator.type = tunnelType;
+                    break;
+                }
+                case enumWireInsulatorVariants[defaultBuildingVariant]:
+                default: {
+                    if (entity.components.WireInsulator) {
+                        entity.removeComponent(WireInsulatorComponent);
+                    }
+                    if (!entity.components.WireTunnel) {
+                        entity.addComponent(new WireTunnelComponent());
+                    }
+                    break;
+                }
+            }
         }
     }));
 
@@ -185,7 +194,7 @@ export function patchWireTunnel() {
                     }
     
                     // Check if it's a tunnel, if so, go to the forwarded item
-                    const tunnelComp = entity.components.WireTunnel;
+                    const tunnelComp = entity.components.WireTunnel || entity.components.WireInsulator;
                     if (tunnelComp) {
                         if (visitedTunnels.has(entity.uid)) {
                             continue;
@@ -197,7 +206,7 @@ export function patchWireTunnel() {
                         // Vanilla behavior is to simply re-add {offset}, but we need to handle corners & missing connections as well
                         const entryDirection = staticComp.worldDirectionToLocal(direction);
 
-                        const exitDirection = enumTunnelConnections[tunnelComp.type][entryDirection];
+                        const exitDirection = enumTunnelConnections[tunnelComp.type ?? defaultBuildingVariant][entryDirection];
                         if (!exitDirection) {
                             continue;
                         }
@@ -286,14 +295,12 @@ export function patchWireTunnel() {
                 return false;
             }
 
-            const targetStaticComp = targetEntity.components.StaticMapEntity;
-
             // Check if its a crossing
-            const wireTunnelComp = targetEntity.components.WireTunnel;
+            const wireTunnelComp = targetEntity.components.WireTunnel || targetEntity.components.WireInsulator;
             if (wireTunnelComp) {
                 const staticComp = targetEntity.components.StaticMapEntity;
                 const direction = staticComp.worldDirectionToLocal(edge);
-                const connection = enumTunnelConnections[wireTunnelComp.type][direction];
+                const connection = enumTunnelConnections[wireTunnelComp.type ?? defaultBuildingVariant][direction];
                 return !!connection;
             }
 

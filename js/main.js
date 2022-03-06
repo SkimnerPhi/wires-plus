@@ -20,6 +20,7 @@ import { MemoryComponent } from "./components/memory";
 import { MultiplexerComponent } from "./components/multiplexer";
 import { SmartProcessorComponent } from "./components/smart_processor";
 import { VirtualMixerComponent } from "./components/virtual_mixer";
+import { WireInsulatorComponent } from "./components/wire_insulator";
 
 import { AdderSystem } from "./systems/adder";
 import { ColorProcessorSystem } from "./systems/color_processor";
@@ -53,6 +54,7 @@ class ModImpl extends Mod {
         this.modInterface.registerComponent(MultiplexerComponent);
         this.modInterface.registerComponent(SmartProcessorComponent);
         this.modInterface.registerComponent(VirtualMixerComponent);
+        this.modInterface.registerComponent(WireInsulatorComponent);
 
         this.modInterface.registerNewBuilding({
             metaClass: MetaAdderBuilding,
