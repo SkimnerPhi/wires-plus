@@ -5,6 +5,7 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumEdgeDetectorType, EdgeDetectorComponent } from "../components/edge_detector";
 import { generateMatrixRotations } from "shapez/core/utils";
+import { isModSafeRewardUnlocked } from "../utils";
 
 const overlayMatrices = {
     [defaultBuildingVariant]: generateMatrixRotations([1, 1, 0, 1, 1, 0, 0, 1, 0]),
@@ -45,7 +46,7 @@ export class MetaEdgeDetectorBuilding extends ModMetaBuilding {
         return overlayMatrices[variant][rotation];
     }
     getIsUnlocked(root) {
-        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_logic_gates);
+        return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_logic_gates);
     }
     getLayer() {
         return "wires";

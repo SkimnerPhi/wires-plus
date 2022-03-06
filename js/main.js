@@ -1,4 +1,6 @@
 import { Mod } from "shapez/mods/mod";
+import { ModInterface } from "shapez/mods/mod_interface";
+
 import { patchLogicGate } from "./patches/logic_gate";
 import { patchWire } from "./patches/wire";
 import { patchWireTunnel } from "./patches/wire_tunnel";
@@ -11,6 +13,7 @@ import { MetaMemoryBuilding } from "./buildings/memory";
 import { MetaMultiplexerBuilding } from "./buildings/multiplexer";
 
 import { AdderComponent } from "./components/adder";
+import { ColorProcessorComponent } from "./components/color_processor";
 import { DiodeComponent } from "./components/diode";
 import { EdgeDetectorComponent } from "./components/edge_detector";
 import { MemoryComponent } from "./components/memory";
@@ -19,6 +22,7 @@ import { SmartProcessorComponent } from "./components/smart_processor";
 import { VirtualMixerComponent } from "./components/virtual_mixer";
 
 import { AdderSystem } from "./systems/adder";
+import { ColorProcessorSystem } from "./systems/color_processor";
 import { DiodeSystem } from "./systems/diode";
 import { EdgeDetectorSystem } from "./systems/edge_detector";
 import { MemorySystem } from "./systems/memory";
@@ -42,6 +46,7 @@ class ModImpl extends Mod {
         patchWireTunnel.call(this);
 
         this.modInterface.registerComponent(AdderComponent);
+        this.modInterface.registerComponent(ColorProcessorComponent);
         this.modInterface.registerComponent(DiodeComponent);
         this.modInterface.registerComponent(EdgeDetectorComponent);
         this.modInterface.registerComponent(MemoryComponent);
@@ -110,6 +115,11 @@ class ModImpl extends Mod {
             systemClass: AdderSystem,
             before: "end",
         });
+        this.modInterface.registerGameSystem({
+            id: "color_processor",
+            systemClass: ColorProcessorSystem,
+            before: "end",
+        })
         this.modInterface.registerGameSystem({
             id: "delay",
             systemClass: DiodeSystem,

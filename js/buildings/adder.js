@@ -4,6 +4,7 @@ import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { AdderComponent } from "../components/adder";
+import { isModSafeRewardUnlocked } from "../utils";
 
 export class MetaAdderBuilding extends ModMetaBuilding {
     constructor() {
@@ -22,7 +23,7 @@ export class MetaAdderBuilding extends ModMetaBuilding {
         return "#A251FF";
     }
     getIsUnlocked(root) {
-        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_logic_gates);
+        return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_logic_gates);
     }
     getLayer() {
         return "wires";

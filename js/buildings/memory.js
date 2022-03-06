@@ -5,6 +5,7 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumMemoryType, MemoryComponent } from "../components/memory";
 import { generateMatrixRotations } from "shapez/core/utils";
+import { isModSafeRewardUnlocked } from "../utils";
 
 const overlayMatrices = {
     [enumMemoryType.t]: generateMatrixRotations([0, 1, 0, 1, 0, 1, 1, 1, 1]),
@@ -54,7 +55,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
         return overlayMatrices[variant]?.[rotation];
     }
     getIsUnlocked(root) {
-        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_logic_gates);
+        return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_logic_gates);
     }
     getLayer() {
         return "wires";

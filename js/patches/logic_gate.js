@@ -12,10 +12,13 @@ import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { LogicGateSystem } from "shapez/game/systems/logic_gate";
 
 export function patchLogicGate() {
-    enumVirtualProcessorVariants.rotater_ccw = "rotater_ccw";
-    enumVirtualProcessorVariants.rotater_180 = "rotater_180";
-    enumLogicGateType.rotater_ccw = "rotater_ccw";
-    enumLogicGateType.rotater_180 = "rotater_180";
+    const addToEnum = {
+        rotater_ccw: "rotater_ccw",
+        rotater_180: "rotater_180",
+    };
+    Object.assign(enumVirtualProcessorVariants, addToEnum);
+    Object.assign(enumLogicGateType, addToEnum);
+
     const enumVariantToGate = {
         [defaultBuildingVariant]: enumLogicGateType.cutter,
         [enumVirtualProcessorVariants.rotater]: enumLogicGateType.rotater,

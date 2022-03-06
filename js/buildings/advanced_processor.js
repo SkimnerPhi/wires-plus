@@ -9,6 +9,8 @@ import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
 import { enumVxMixerType, VirtualMixerComponent } from "../components/virtual_mixer";
 import { enumSmartProcessorType, SmartProcessorComponent } from "../components/smart_processor";
 import { generateMatrixRotations } from "shapez/core/utils";
+import { ColorProcessorComponent, enumColorProcessorType } from "../components/color_processor";
+import { isModSafeRewardUnlocked } from "../utils";
 
 const colors = {
     [defaultBuildingVariant]: new MetaMixerBuilding().getSilhouetteColor(),
@@ -20,8 +22,6 @@ const colors = {
 const overlayMatrices = {
     [defaultBuildingVariant]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 1, 1, 1]),
     [enumVxMixerType.unmixer]: generateMatrixRotations([1, 1, 1, 1, 0, 1, 0, 1, 0]),
-    [enumSmartProcessorType.stacker]: generateMatrixRotations([1, 1, 1, 1, 0, 1, 1, 1, 1]),
-    [enumSmartProcessorType.painter]: generateMatrixRotations([1, 1, 1, 1, 0, 1, 1, 1, 1])
 };
 
 export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
@@ -49,6 +49,16 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 variant: enumSmartProcessorType.painter,
                 name: "Smart Painter",
                 description: "Virtually paints the shape from the bottom input with the color on the right input, or just outputs the input shape otherwise.",
+            },
+            {
+                variant: enumColorProcessorType.adder,
+                name: "Color Adder",
+                description: "Compute a color by adding together two input colors.",
+            },
+            {
+                variant: enumColorProcessorType.subtractor,
+                name: "Color Subtractor",
+                description: "Compute a color by subtracting the color from the right input from the color on the bottom input.",
             }
         ];
     }
@@ -56,13 +66,20 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
         return colors[variant];
     }
     getAvailableVariants(root) {
-        return [defaultBuildingVariant, enumVxMixerType.unmixer, enumSmartProcessorType.stacker, enumSmartProcessorType.painter];
+        return [
+            defaultBuildingVariant,
+            enumVxMixerType.unmixer,
+            enumSmartProcessorType.stacker,
+            enumSmartProcessorType.painter,
+            enumColorProcessorType.adder,
+            enumColorProcessorType.subtractor,
+        ];
     }
     getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant) {
-        return overlayMatrices[variant][rotation];
+        return overlayMatrices[variant]?.[rotation];
     }
     getIsUnlocked(root) {
-        return root.hubGoals.isRewardUnlocked(enumHubGoalRewards.reward_virtual_processing);
+        return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_virtual_processing);
     }
     getLayer() {
         return "wires";
@@ -78,6 +95,12 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
 
         switch (variant) {
             case defaultBuildingVariant: {
+                if(entity.components.SmartProcessor) {
+                    entity.removeComponent(SmartProcessorComponent);
+                }
+                if(entity.components.ColorProcessor) {
+                    entity.removeComponent(ColorProcessorComponent);
+                }
                 if(!entity.components.VirtualMixer) {
                     entity.addComponent(new VirtualMixerComponent({}));
                 }
@@ -108,6 +131,12 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
                 break;
             }
             case enumVxMixerType.unmixer: {
+                if(entity.components.SmartProcessor) {
+                    entity.removeComponent(SmartProcessorComponent);
+                }
+                if(entity.components.ColorProcessor) {
+                    entity.removeComponent(ColorProcessorComponent);
+                }
                 if(!entity.components.VirtualMixer) {
                     entity.addComponent(new VirtualMixerComponent({}));
                 }
@@ -139,11 +168,49 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
             }
             case enumSmartProcessorType.stacker:
             case enumSmartProcessorType.painter: {
+                if(entity.components.VirtualMixer) {
+                    entity.removeComponent(VirtualMixerComponent);
+                }
+                if(entity.components.ColorProcessor) {
+                    entity.removeComponent(ColorProcessorComponent);
+                }
                 if(!entity.components.SmartProcessor) {
                     entity.addComponent(new SmartProcessorComponent({}));
                 }
                 const smartType = enumSmartProcessorType[variant];
                 entity.components.SmartProcessor.type = smartType;
+                pinComp.setSlots([
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.bottom,
+                        type: enumPinSlotType.logicalAcceptor,
+                    },
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.right,
+                        type: enumPinSlotType.logicalAcceptor,
+                    },
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.top,
+                        type: enumPinSlotType.logicalEjector,
+                    },
+                ]);
+                break;
+            }
+            case enumColorProcessorType.adder: 
+            case enumColorProcessorType.subtractor: {
+                if(entity.components.VirtualMixer) {
+                    entity.removeComponent(VirtualMixerComponent);
+                }
+                if(entity.components.SmartProcessor) {
+                    entity.removeComponent(SmartProcessorComponent);
+                }
+                if(!entity.components.ColorProcessor) {
+                    entity.addComponent(new ColorProcessorComponent({}));
+                }
+                const colorType = enumColorProcessorType[variant];
+                entity.components.ColorProcessor.type = colorType;
                 pinComp.setSlots([
                     {
                         pos: new Vector(0, 0),

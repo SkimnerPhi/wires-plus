@@ -6,10 +6,12 @@ import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 
 export function patchWire() {
-    enumWireVariant.third = "third";
-    enumWireVariant.fourth = "fourth";
-    wireVariants.third = "third";
-    wireVariants.fourth = "fourth";
+    const addToEnum = {
+        third: "third",
+        fourth: "fourth",
+    };
+    Object.assign(enumWireVariant, addToEnum);
+    Object.assign(wireVariants, addToEnum);
 
     const enumWireVariantToVariant = {
         [defaultBuildingVariant]: enumWireVariant.first,
