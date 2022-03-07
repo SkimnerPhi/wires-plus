@@ -17,29 +17,6 @@ export function patchWireTunnel() {
         turn: generateMatrixRotations([0, 0, 0, 0, 1, 1, 0, 1, 0]),
         double_turn: generateMatrixRotations([1, 1, 0, 1, 0, 1, 0, 1, 1]),
     };
-    
-    const enumTunnelConnections = {
-        [defaultBuildingVariant]: {
-            [enumDirection.top]: enumDirection.top,
-            [enumDirection.right]: enumDirection.right,
-            [enumDirection.bottom]: enumDirection.bottom,
-            [enumDirection.left]: enumDirection.left,
-        },
-        forward: {
-            [enumDirection.top]: enumDirection.top,
-            [enumDirection.bottom]: enumDirection.bottom,
-        },
-        turn: {
-            [enumDirection.top]: enumDirection.right,
-            [enumDirection.left]: enumDirection.bottom,
-        },
-        double_turn: {
-            [enumDirection.top]: enumDirection.right,
-            [enumDirection.right]: enumDirection.top,
-            [enumDirection.bottom]: enumDirection.left,
-            [enumDirection.left]: enumDirection.bottom,
-        },
-    };
 
     this.modInterface.addVariantToExistingBuilding(
         MetaWireTunnelBuilding,
@@ -87,29 +64,8 @@ export function patchWireTunnel() {
     this.modInterface.extendClass(MetaWireTunnelBuilding, ({ $old }) => ({
         updateVariants(entity, rotationVariant, variant) {
             const tunnelType = enumWireInsulatorVariants[variant];
-            switch(tunnelType) {
-                case enumWireInsulatorVariants.forward:
-                case enumWireInsulatorVariants.turn:
-                case enumWireInsulatorVariants.double_turn: {
-                    if (entity.components.WireTunnel) {
-                        entity.removeComponent(WireTunnelComponent);
-                    }
-                    if (!entity.components.WireInsulator) {
-                        entity.addComponent(new WireInsulatorComponent({}));
-                    }
-                    entity.components.WireInsulator.type = tunnelType;
-                    break;
-                }
-                case enumWireInsulatorVariants[defaultBuildingVariant]:
-                default: {
-                    if (entity.components.WireInsulator) {
-                        entity.removeComponent(WireInsulatorComponent);
-                    }
-                    if (!entity.components.WireTunnel) {
-                        entity.addComponent(new WireTunnelComponent());
-                    }
-                    break;
-                }
+            if (!entity.components.WireInsulator) {
+                entity.addComponent(new WireInsulatorComponent({ type: tunnelType }));
             }
         }
     }));
@@ -188,58 +144,65 @@ export function patchWireTunnel() {
                                 });
                             }
                         }
-    
-                        // Pin slots mean it can be nothing else
-                        continue;
                     }
     
-                    // Check if it's a tunnel, if so, go to the forwarded item
-                    const tunnelComp = entity.components.WireTunnel || entity.components.WireInsulator;
+                    // Check if it's an insulator, if so, go to the forwarded item
+                    const tunnelComp = entity.components.WireInsulator;
                     if (tunnelComp) {
                         if (visitedTunnels.has(entity.uid)) {
                             continue;
                         }
     
                         const staticComp = entity.components.StaticMapEntity;
-    
-                        // Compute where this tunnel connects to
-                        // Vanilla behavior is to simply re-add {offset}, but we need to handle corners & missing connections as well
-                        const entryDirection = staticComp.worldDirectionToLocal(direction);
+                        
+                        const connections = tunnelComp.connections;
+                        for (let j = 0; j < connections.length; ++j) {
+                            const conn = connections[j].from;
 
-                        const exitDirection = enumTunnelConnections[tunnelComp.type ?? defaultBuildingVariant][entryDirection];
-                        if (!exitDirection) {
-                            continue;
-                        }
-                        const trueExitDirection = staticComp.localDirectionToWorld(exitDirection);
+                            const connPos = staticComp.localTileToWorld(conn.pos);
+                            if (!connPos.equals(tile)) {
+                                continue;
+                            }
 
-                        const tunnelOffset = enumDirectionToVector[trueExitDirection];
-                        const forwardedTile = staticComp.origin.add(tunnelOffset);
-                        direction = trueExitDirection;
+                            const connDirection = staticComp.localDirectionToWorld(conn.direction);
+                            if (connDirection !== enumInvertedDirections[direction]) {
+                                continue;
+                            }
 
-                        // Figure out which entities are connected
-                        const connectedContents = this.root.map.getLayersContentsMultipleXY(
-                            forwardedTile.x,
-                            forwardedTile.y
-                        );
-    
-                        // Attach the entities and the tile we search at, because it may change
-                        for (let h = 0; h < connectedContents.length; ++h) {
-                            contents.push({
-                                entity: connectedContents[h],
-                                tile: forwardedTile,
-                            });
+                            const toConn = connections[j].to;
+
+                            const tunnelOffset = enumDirectionToVector[toConn.direction];
+                            const localForwardedTile = toConn.pos.add(tunnelOffset);
+                            const forwardedTile = staticComp.localTileToWorld(localForwardedTile);
+
+                            direction = staticComp.localDirectionToWorld(toConn.direction);
+
+                            const connectedContents = this.root.map.getLayersContentsMultipleXY(
+                                forwardedTile.x,
+                                forwardedTile.y
+                            );
+
+                            // Attach the entities and the tile we search at, because it may change
+                            for (let h = 0; h < connectedContents.length; ++h) {
+                                contents.push({
+                                    entity: connectedContents[h],
+                                    tile: forwardedTile,
+                                });
+                            }
+
+                            // Add the tunnel to the network
+                            if (tunnelComp.linkedNetworks.indexOf(network) < 0) {
+                                tunnelComp.linkedNetworks.push(network);
+                            }
+                            if (network.tunnels.indexOf(entity) < 0) {
+                                network.tunnels.push(entity);
+                            }
+        
+                            // Remember this tunnel
+                            visitedTunnels.add(entity.uid);
+                            
+                            break;
                         }
-    
-                        // Add the tunnel to the network
-                        if (tunnelComp.linkedNetworks.indexOf(network) < 0) {
-                            tunnelComp.linkedNetworks.push(network);
-                        }
-                        if (network.tunnels.indexOf(entity) < 0) {
-                            network.tunnels.push(entity);
-                        }
-    
-                        // Remember this tunnel
-                        visitedTunnels.add(entity.uid);
                     }
                 }
             }
@@ -296,11 +259,14 @@ export function patchWireTunnel() {
             }
 
             // Check if its a crossing
-            const wireTunnelComp = targetEntity.components.WireTunnel || targetEntity.components.WireInsulator;
-            if (wireTunnelComp) {
+            const insulatorComp = targetEntity.components.WireInsulator;
+            if (insulatorComp) {
                 const staticComp = targetEntity.components.StaticMapEntity;
                 const direction = staticComp.worldDirectionToLocal(edge);
-                const connection = enumTunnelConnections[wireTunnelComp.type ?? defaultBuildingVariant][direction];
+                const connection = insulatorComp.connections.find(c => (
+                    direction === enumInvertedDirections[c.from.direction] &&
+                    targetTile.equals(staticComp.localTileToWorld(c.from.pos))
+                ));
                 return !!connection;
             }
 
