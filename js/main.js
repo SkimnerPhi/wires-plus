@@ -46,6 +46,7 @@ class ModImpl extends Mod {
         patchWire.call(this);
         patchWireTunnel.call(this);
 
+
         this.modInterface.registerComponent(AdderComponent);
         this.modInterface.registerComponent(ColorProcessorComponent);
         this.modInterface.registerComponent(DiodeComponent);
@@ -55,6 +56,7 @@ class ModImpl extends Mod {
         this.modInterface.registerComponent(SmartProcessorComponent);
         this.modInterface.registerComponent(VirtualMixerComponent);
         this.modInterface.registerComponent(WireInsulatorComponent);
+
 
         this.modInterface.registerNewBuilding({
             metaClass: MetaAdderBuilding,
@@ -84,12 +86,7 @@ class ModImpl extends Mod {
         this.modInterface.addNewBuildingToToolbar({
             toolbar: "wires",
             location: "primary",
-            metaClass: MetaAdderBuilding,
-        });
-        this.modInterface.addNewBuildingToToolbar({
-            toolbar: "wires",
-            location: "secondary",
-            metaClass: MetaDiodeBuilding,
+            metaClass: MetaAdvancedProcessorBuilding,
         });
         this.modInterface.addNewBuildingToToolbar({
             toolbar: "wires",
@@ -104,13 +101,20 @@ class ModImpl extends Mod {
         this.modInterface.addNewBuildingToToolbar({
             toolbar: "wires",
             location: "primary",
-            metaClass: MetaAdvancedProcessorBuilding,
+            metaClass: MetaAdderBuilding,
+        });
+        
+        this.modInterface.addNewBuildingToToolbar({
+            toolbar: "wires",
+            location: "secondary",
+            metaClass: MetaDiodeBuilding,
         });
         this.modInterface.addNewBuildingToToolbar({
             toolbar: "wires",
-            location: "primary",
+            location: "secondary",
             metaClass: MetaEdgeDetectorBuilding,
         });
+
 
         this.modInterface.registerGameSystem({
             id: "adder",
