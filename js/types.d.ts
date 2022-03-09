@@ -1568,7 +1568,7 @@ declare module "shapez/core/rectangle" {
          */
         containsCircle(x: number, y: number, radius: number): boolean;
         /**
-         * Returns if hte rectangle contains the given point
+         * Returns if the rectangle contains the given point
          * @param {number} x
          * @param {number} y
          * @returns {boolean}
@@ -4495,8 +4495,9 @@ declare module "shapez/game/meta_building" {
         getDimensions(variant?: string): Vector;
         /**
          * Returns whether the building has the direction lock switch available
+         * @param {string} variant
          */
-        getHasDirectionLockAvailable(): boolean;
+        getHasDirectionLockAvailable(variant: string): boolean;
         /**
          * Whether to stay in placement mode after having placed a building
          */
@@ -4524,8 +4525,10 @@ declare module "shapez/game/meta_building" {
         getAdditionalStatistics(root: GameRoot, variant: string): Array<[string, string]>;
         /**
          * Returns whether this building can get replaced
+         * @param {string} variant
+         * @param {number} rotationVariant
          */
-        getIsReplaceable(): boolean;
+        getIsReplaceable(variant: string, rotationVariant: number): boolean;
         /**
          * Whether to flip the orientation after a building has been placed - useful
          * for tunnels.
@@ -8266,8 +8269,6 @@ declare module "shapez/game/hud/parts/interactive_tutorial" {
 declare module "shapez/core/query_parameters" {
     export namespace queryParamOptions {
         export const embedProvider: any;
-        export const fullVersion: boolean;
-        export const sandboxMode: boolean;
     }
 }
 declare module "shapez/game/hud/parts/sandbox_controller" {
@@ -13717,15 +13718,7 @@ declare module "shapez/platform/game_analytics" {
 declare module "shapez/platform/browser/game_analytics" {
     export class ShapezGameAnalytics extends GameAnalyticsInterface {
         constructor(app: any);
-        get environment():
-            | "dev"
-            | "steam-sandbox"
-            | "steam"
-            | "prod"
-            | "alpha-sandbox"
-            | "alpha"
-            | "beta-sandbox"
-            | "beta";
+        get environment(): "dev" | "steam" | "prod" | "alpha" | "beta";
         syncKey: any;
         /**
          * Sends a request to the api
