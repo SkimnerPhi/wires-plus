@@ -7,6 +7,7 @@ export const enumWireInsulatorVariants = {
     forward: "forward",
     turn: "turn",
     double_turn: "double_turn",
+    swap: "swap",
 };
 
 export class WireInsulatorComponent extends Component {
@@ -15,8 +16,6 @@ export class WireInsulatorComponent extends Component {
     }
     constructor(payload = { type: "forward" }) {
         super();
-        
-        this.linkedNetworks = [];
 
         switch(payload.type) {
             case defaultBuildingVariant: {
@@ -90,6 +89,31 @@ export class WireInsulatorComponent extends Component {
                         {
                             pos: new Vector(0, 0),
                             direction: enumDirection.right,
+                        },
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.bottom,
+                        },
+                    ],
+                ];
+                break;
+            }
+            case enumWireInsulatorVariants.swap: {
+                this.connections = [
+                    [
+                        {
+                            pos: new Vector(0, 0),
+                            direction: enumDirection.top,
+                        },
+                        {
+                            pos: new Vector(1, 0),
+                            direction: enumDirection.bottom,
+                        },
+                    ],
+                    [
+                        {
+                            pos: new Vector(1, 0),
+                            direction: enumDirection.top,
                         },
                         {
                             pos: new Vector(0, 0),

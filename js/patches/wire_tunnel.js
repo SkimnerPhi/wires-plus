@@ -51,10 +51,22 @@ export function patchWireTunnel() {
             }
         }
     );
+    this.modInterface.addVariantToExistingBuilding(
+        MetaWireTunnelBuilding,
+        enumWireInsulatorVariants.swap,
+        {
+            name: "Wire Swapper",
+            description: "Switches two parallel wires.",
+            dimensions: new Vector(2, 1),
+            isUnlocked(root) {
+                return isModSafeRewardUnlocked(root, enumHubGoalRewards.reward_freeplay);
+            }
+        }
+    );
 
     this.modInterface.extendClass(MetaWireTunnelBuilding, ({ $old }) => ({
         getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant, entity) {
-            return overlayMatrices[variant][rotation];
+            return overlayMatrices[variant]?.[rotation];
         },
         getIsRotateable() {
             return true;
@@ -76,8 +88,7 @@ export function patchWireTunnel() {
 
             // Go over all directions we should search for
             for (let i = 0; i < directions.length; ++i) {
-                let direction = directions[i];
-                const offset = enumDirectionToVector[direction];
+                const offset = enumDirectionToVector[directions[i]];
                 const initialSearchTile = initialTile.add(offset);
     
                 // Store which tunnels we already visited to avoid infinite loops
@@ -90,17 +101,17 @@ export function patchWireTunnel() {
                 );
     
                 // Link the initial tile to the initial entities, since it may change
-                /** @type {Array<{entity: import("shapez/savegame/savegame_typedefs").Entity, tile: Vector}>} */
                 const contents = [];
                 for (let j = 0; j < initialContents.length; ++j) {
                     contents.push({
+                        direction: directions[i],
                         entity: initialContents[j],
                         tile: initialSearchTile,
                     });
                 }
     
                 for (let k = 0; k < contents.length; ++k) {
-                    const { entity, tile } = contents[k];
+                    const { direction, entity, tile } = contents[k];
                     const wireComp = entity.components.Wire;
     
                     // Check for wire
@@ -147,15 +158,15 @@ export function patchWireTunnel() {
                     }
     
                     // Check if it's an insulator, if so, go to the forwarded item
-                    const tunnelComp = entity.components.WireInsulator;
-                    if (tunnelComp) {
+                    const insulatorComp = entity.components.WireInsulator;
+                    if (insulatorComp) {
                         if (visitedTunnels.has(entity.uid)) {
                             continue;
                         }
     
                         const staticComp = entity.components.StaticMapEntity;
                         
-                        const connections = tunnelComp.connections;
+                        const connections = insulatorComp.connections;
                         for (let j = 0; j < connections.length; ++j) {
                             const conn = connections[j].from;
 
@@ -175,8 +186,6 @@ export function patchWireTunnel() {
                             const localForwardedTile = toConn.pos.add(tunnelOffset);
                             const forwardedTile = staticComp.localTileToWorld(localForwardedTile);
 
-                            direction = staticComp.localDirectionToWorld(toConn.direction);
-
                             const connectedContents = this.root.map.getLayersContentsMultipleXY(
                                 forwardedTile.x,
                                 forwardedTile.y
@@ -185,12 +194,14 @@ export function patchWireTunnel() {
                             // Attach the entities and the tile we search at, because it may change
                             for (let h = 0; h < connectedContents.length; ++h) {
                                 contents.push({
+                                    direction: staticComp.localDirectionToWorld(toConn.direction),
                                     entity: connectedContents[h],
                                     tile: forwardedTile,
                                 });
                             }
 
                             // Add the tunnel to the network
+                            const tunnelComp = entity.components.WireTunnel;
                             if (tunnelComp.linkedNetworks.indexOf(network) < 0) {
                                 tunnelComp.linkedNetworks.push(network);
                             }
@@ -200,8 +211,6 @@ export function patchWireTunnel() {
         
                             // Remember this tunnel
                             visitedTunnels.add(entity.uid);
-                            
-                            break;
                         }
                     }
                 }
