@@ -47,7 +47,22 @@ export const enumShapeCombiningResults = {
     [enumCombinedShape.starwindmill]: {},
 };
 
- export function combineDefinitions(definition1, definition2) {
+for (const key in enumShapeCombiningResults) {
+    enumShapeCombiningResults[key][key] = key;
+}
+
+// autofill everything else
+for (const combined in enumCombinedShape) {
+    for (const shape in enumSubShape) {
+        enumShapeCombiningResults[combined][shape] = combined;
+        enumShapeCombiningResults[shape][combined] = combined;
+    }
+    for (const innerCombined in enumCombinedShape) {
+        enumShapeCombiningResults[combined][innerCombined] = combined;
+    }
+}
+
+export function combineDefinitions(definition1, definition2) {
     let outDefinition = new ShapeDefinition({ layers: [] });
 
     const maxLayers = Math.max(definition1.layers.length, definition2.layers.length);
