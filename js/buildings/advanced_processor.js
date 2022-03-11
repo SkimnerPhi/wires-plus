@@ -53,7 +53,7 @@ export class MetaAdvancedProcessorBuilding extends ModMetaBuilding {
             {
                 variant: enumSmartProcessorType.nipper,
                 name: "Nipper",
-                description: "Virtually removes the top left corner from the input shape and outputs the rest."
+                description: "Virtually removes the top right corner from the input shape and outputs the rest."
             },
             {
                 variant: enumColorProcessorType.adder,
