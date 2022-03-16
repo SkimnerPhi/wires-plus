@@ -76,6 +76,7 @@ export class MetaMemoryBuilding extends ModMetaBuilding {
     updateVariants(entity, rotationVariant, variant) {
         const memoryType = enumMemoryType[variant];
         entity.components.Memory.type = memoryType;
+        entity.components.Memory.clear();
 
         const pinComp = entity.components.WiredPins;
 

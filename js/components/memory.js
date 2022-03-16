@@ -20,22 +20,10 @@ export class MemoryComponent extends Component {
             signal: shapez.types.nullable(typeItemSingleton),
         };
     }
-    constructor({ type = enumMemoryType.jk, signal = null }) {
+    constructor({ type = enumMemoryType.jk }) {
         super();
         this.type = type;
-
-        switch(type) {
-            case enumMemoryType.jk:
-            case enumMemoryType.t: {
-                this.signal = castBool(isTruthyItem(signal));
-                break;
-            }
-            case enumMemoryType.simple:
-            case enumMemoryType.write_enable: {
-                this.signal = signal;
-                break;
-            }
-        }
+        this.signal = null;
     }
 
     clear() {
