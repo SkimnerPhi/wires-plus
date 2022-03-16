@@ -82,7 +82,9 @@ export class SmartProcessorSystem extends GameSystemWithFilter {
 
                     const shapeDef = shapeNetwork.currentValue.definition;
                     const nippedDef = shapeDef.cloneFilteredByQuadrants([1, 2, 3]);
-                    slotComp.slots[1].value = this.root.shapeDefinitionMgr.getShapeItemFromDefinition(nippedDef);
+                    slotComp.slots[1].value = nippedDef.isEntirelyEmpty()
+                        ? null
+                        : this.root.shapeDefinitionMgr.getShapeItemFromDefinition(nippedDef);
                     break;
                 }
             }
