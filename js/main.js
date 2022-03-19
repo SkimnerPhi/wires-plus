@@ -1,18 +1,22 @@
 import { Mod } from "shapez/mods/mod";
-import { ModInterface } from "shapez/mods/mod_interface";
 
 import { patchLogicGate } from "./patches/logic_gate";
 import { patchWire } from "./patches/wire";
 import { patchWireTunnel } from "./patches/wire_tunnel";
+import { patchWireSystem } from "./patches/wire_system";
+import { patchGameLogic } from "./patches/game_logic";
 
 import { MetaAdderBuilding } from "./buildings/adder";
 import { MetaAdvancedProcessorBuilding } from "./buildings/advanced_processor";
+import { MetaBundleBuilding } from "./buildings/bundle";
 import { MetaDiodeBuilding } from "./buildings/diode";
 import { MetaEdgeDetectorBuilding } from "./buildings/edge_detector";
 import { MetaMemoryBuilding } from "./buildings/memory";
 import { MetaMultiplexerBuilding } from "./buildings/multiplexer";
 
 import { AdderComponent } from "./components/adder";
+import { BundleComponent } from "./components/bundle";
+import { BundleInterfaceComponent } from "./components/bundle_interface";
 import { ColorProcessorComponent } from "./components/color_processor";
 import { DiodeComponent } from "./components/diode";
 import { EdgeDetectorComponent } from "./components/edge_detector";
@@ -39,15 +43,21 @@ import memoryIcon from "../res/sprites/building_icons/memory.png";
 import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
 
 import META from "../mod.json";
+import { HUDBundleInterfaceEdit } from "./hud/bundle_interface_edit";
+import { BundleInterfaceSystem } from "./systems/bundle_interface";
 
 class ModImpl extends Mod {
     init() {
         patchLogicGate.call(this);
         patchWire.call(this);
         patchWireTunnel.call(this);
+        patchWireSystem.call(this);
+        patchGameLogic.call(this);
 
 
         this.modInterface.registerComponent(AdderComponent);
+        this.modInterface.registerComponent(BundleComponent);
+        this.modInterface.registerComponent(BundleInterfaceComponent);
         this.modInterface.registerComponent(ColorProcessorComponent);
         this.modInterface.registerComponent(DiodeComponent);
         this.modInterface.registerComponent(EdgeDetectorComponent);
@@ -61,6 +71,10 @@ class ModImpl extends Mod {
         this.modInterface.registerNewBuilding({
             metaClass: MetaAdderBuilding,
             buildingIconBase64: adderIcon,
+        });
+        this.modInterface.registerNewBuilding({
+            metaClass: MetaBundleBuilding,
+            buildingIconBase64: advancedProcessorIcon,
         });
         this.modInterface.registerNewBuilding({
             metaClass: MetaDiodeBuilding,
@@ -114,6 +128,11 @@ class ModImpl extends Mod {
             location: "secondary",
             metaClass: MetaEdgeDetectorBuilding,
         });
+        this.modInterface.addNewBuildingToToolbar({
+            toolbar: "wires",
+            location: "secondary",
+            metaClass: MetaBundleBuilding,
+        });
 
 
         this.modInterface.registerGameSystem({
@@ -122,7 +141,12 @@ class ModImpl extends Mod {
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "color_processor",
+            id: "bundleInterface",
+            systemClass: BundleInterfaceSystem,
+            before: "end",
+        });
+        this.modInterface.registerGameSystem({
+            id: "colorProcessor",
             systemClass: ColorProcessorSystem,
             before: "end",
         })
@@ -132,7 +156,7 @@ class ModImpl extends Mod {
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "edge_detector",
+            id: "edgeDetector",
             systemClass: EdgeDetectorSystem,
             before: "end",
         });
@@ -147,14 +171,16 @@ class ModImpl extends Mod {
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "smart_processor",
+            id: "smartProcessor",
             systemClass: SmartProcessorSystem,
             before: "end",
         });
         this.modInterface.registerGameSystem({
-            id: "virtual_mixer",
+            id: "virtualMixer",
             systemClass: VirtualMixerSystem,
             before: "end",
         });
+
+        this.modInterface.registerHudElement("bundleInterfaceEdit", HUDBundleInterfaceEdit);
     }
 }

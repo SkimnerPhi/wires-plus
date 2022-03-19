@@ -1,6 +1,7 @@
 import { Vector, enumDirection } from "shapez/core/vector";
 import { MetaMixerBuilding } from "shapez/game/buildings/mixer";
 import { MetaPainterBuilding } from "shapez/game/buildings/painter";
+import { MetaCutterBuilding } from "shapez/game/buildings/cutter";
 import { MetaStackerBuilding } from "shapez/game/buildings/stacker";
 import { enumPinSlotType, WiredPinsComponent } from "shapez/game/components/wired_pins";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
@@ -17,6 +18,9 @@ const colors = {
     [enumVxMixerType.unmixer]: new MetaMixerBuilding().getSilhouetteColor(),
     [enumSmartProcessorType.stacker]: new MetaStackerBuilding().getSilhouetteColor(),
     [enumSmartProcessorType.painter]: new MetaPainterBuilding().getSilhouetteColor(),
+   // [enumSmartProcessorType.nipper]: new MetaCutterBuilding().getSilhoutetteColor(),
+    [enumColorProcessorType.adder]: new MetaMixerBuilding().getSilhouetteColor(),
+    [enumColorProcessorType.subtractor]: new MetaMixerBuilding().getSilhouetteColor(),
 };
 
 const overlayMatrices = {
