@@ -6,21 +6,24 @@ import { fastArrayDeleteValueIfContained } from "shapez/core/utils";
 import { arrayAllDirections, enumDirectionToVector, enumInvertedDirections, Vector } from "shapez/core/vector";
 import { MetaWireBuilding, arrayWireRotationVariantToType } from "shapez/game/buildings/wire";
 import { getCodeFromBuildingData } from "shapez/game/building_codes";
-import { enumWireType, WireComponent } from "shapez/game/components/wire";
+import { enumColors } from "shapez/game/colors";
+import { WireComponent } from "shapez/game/components/wire";
 import { WiredPinsComponent, enumPinSlotType } from "shapez/game/components/wired_pins";
 import { WireTunnelComponent } from "shapez/game/components/wire_tunnel";
+import { isTruthyItem } from "shapez/game/items/boolean_item";
 import { MapChunkView } from "shapez/game/map_chunk_view";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { WireSystem, WireNetwork } from "shapez/game/systems/wire";
-import { MetaBundleBuilding } from "../buildings/bundle";
+import { arrayBundleRotationVariantToType, enumBundleType, MetaBundleBuilding } from "../buildings/bundle";
 import { BundleComponent } from "../components/bundle";
+import { BundledPinsComponent } from "../components/bundled_pins";
 import { bundleConnectionFacing, BundleInterfaceComponent, wireConnectionFacing } from "../components/bundle_interface";
 
 export function patchWireSystem() {
     const logger = createLogger("wires");
 
     const bundleSprites = {};
-    for (const bundleType in enumWireType) {
+    for (const bundleType in enumBundleType) {
         bundleSprites[bundleType] = Loader.getSprite(`sprites/wires/sets/bundle_${bundleType}.png`);
     }
 
@@ -35,7 +38,8 @@ export function patchWireSystem() {
             const bundleEntities = this.root.entityMgr.getAllWithComponent(BundleComponent);
             const interfaceEntities = this.root.entityMgr.getAllWithComponent(BundleInterfaceComponent);
             const tunnelEntities = this.root.entityMgr.getAllWithComponent(WireTunnelComponent);
-            const pinEntities = this.root.entityMgr.getAllWithComponent(WiredPinsComponent);
+            const wiredPinEntities = this.root.entityMgr.getAllWithComponent(WiredPinsComponent);
+            const bundledPinEntities = this.root.entityMgr.getAllWithComponent(BundledPinsComponent);
 
             // Clear all network references, but not on the first update since that's the deserializing one
             if (!this.isFirstRecompute) {
@@ -52,10 +56,19 @@ export function patchWireSystem() {
                     tunnelEntities[i].components.WireTunnel.linkedNetworks = [];
                 }
 
-                for (let i = 0; i < pinEntities.length; ++i) {
-                    const slots = pinEntities[i].components.WiredPins.slots;
+                for (let i = 0; i < wiredPinEntities.length; ++i) {
+                    const slots = wiredPinEntities[i].components.WiredPins.slots;
                     for (let k = 0; k < slots.length; ++k) {
                         slots[k].linkedNetwork = null;
+                    }
+                }
+
+                for (let i = 0; i < bundledPinEntities.length; ++i) {
+                    const slots = bundledPinEntities[i].components.BundledPins.slots;
+                    for (let k = 0; k < slots.length; ++k) {
+                        for (const color in enumColors) {
+                            slots[k].channels[color].linkedNetwork = null;
+                        }
                     }
                 }
             } else {
@@ -64,8 +77,8 @@ export function patchWireSystem() {
             }
 
             // Iterate over all ejector slots
-            for (let i = 0; i < pinEntities.length; ++i) {
-                const entity = pinEntities[i];
+            for (let i = 0; i < wiredPinEntities.length; ++i) {
+                const entity = wiredPinEntities[i];
                 const slots = entity.components.WiredPins.slots;
                 for (let k = 0; k < slots.length; ++k) {
                     const slot = slots[k];
@@ -416,6 +429,29 @@ export function patchWireSystem() {
 
             return result;
         },
+        getSpriteSetAndOpacityForWire(wireComp) {
+            if (!wireComp.linkedNetwork) {
+                // There is no network, it's empty
+                return {
+                    spriteSet: this.wireSprites[wireComp.variant],
+                    opacity: 0.5,
+                };
+            }
+    
+            const network = wireComp.linkedNetwork;
+            if (network.valueConflict) {
+                // There is a conflict
+                return {
+                    spriteSet: this.wireSprites[wireComp.variant],
+                    opacity: 1,
+                };
+            }
+    
+            return {
+                spriteSet: this.wireSprites[wireComp.variant],
+                opacity: isTruthyItem(network.currentValue) ? 1 : 0.5,
+            };
+        },
         drawChunk(parameters, chunk) {
             const contents = chunk.wireContents;
             for (let y = 0; y < globalConfig.mapChunkSize; ++y) {
@@ -434,6 +470,12 @@ export function patchWireSystem() {
                             const staticComp = entity.components.StaticMapEntity;
                             parameters.context.globalAlpha = opacity;
                             staticComp.drawSpriteOnBoundsClipped(parameters, sprite, 0);
+
+                            if(wireComp.linkedNetwork?.valueConflict) {
+                                const conflictSprite = this.wireSprites.conflict[wireType];
+                                parameters.context.globalAlpha = 1;
+                                staticComp.drawSpriteOnBoundsClipped(parameters, conflictSprite, 0);
+                            }
                         }
                         if (entity.components.Bundle) {
                             const bundleComp = entity.components.Bundle;
@@ -512,7 +554,7 @@ export function patchWireSystem() {
                                 layer: targetEntity.layer,
                             });
 
-                            const newType = arrayWireRotationVariantToType[rotationVariant];
+                            const newType = arrayBundleRotationVariantToType[rotationVariant];
 
                             if (targetStaticComp.rotation !== rotation || newType !== targetBundleComp.type) {
                                 // Change stuff

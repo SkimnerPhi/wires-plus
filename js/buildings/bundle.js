@@ -1,9 +1,6 @@
 import { Loader } from "shapez/core/loader";
 import { generateMatrixRotations } from "shapez/core/utils";
 import { enumDirection, Vector } from "shapez/core/vector";
-import { arrayWireRotationVariantToType, wireOverlayMatrices } from "shapez/game/buildings/wire";
-import { enumWireType } from "shapez/game/components/wire";
-import { Entity } from "shapez/game/entity";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { ModMetaBuilding } from "shapez/mods/mod_meta_building";
@@ -16,7 +13,32 @@ const enumBundleVariants = {
     "interface": "interface",
 };
 
-const interfaceOverlayMatrices = generateMatrixRotations([0, 1, 0, 0, 1, 0, 1, 0, 1]);
+const interfaceOverlayMatrices = generateMatrixRotations([1, 0, 1, 0, 1, 0, 0, 1, 0]);
+
+export const enumBundleType = {
+    "node": "node",
+    "stub": "stub",
+    "forward": "forward",
+    "turn": "turn",
+    "split": "split",
+    "cross": "cross",
+}
+export const arrayBundleRotationVariantToType = [
+    enumBundleType.node,
+    enumBundleType.stub,
+    enumBundleType.forward,
+    enumBundleType.turn,
+    enumBundleType.split,
+    enumBundleType.cross,
+];
+export const bundleOverlayMatrices = {
+    [enumBundleType.node]: generateMatrixRotations([0, 0, 0, 0, 1, 0, 0, 0, 0]),
+    [enumBundleType.stub]: generateMatrixRotations([0, 0, 0, 0, 1, 0, 0, 1, 0]),
+    [enumBundleType.forward]: generateMatrixRotations([0, 1, 0, 0, 1, 0, 0, 1, 0]),
+    [enumBundleType.split]: generateMatrixRotations([0, 0, 0, 1, 1, 1, 0, 1, 0]),
+    [enumBundleType.turn]: generateMatrixRotations([0, 0, 0, 0, 1, 1, 0, 1, 0]),
+    [enumBundleType.cross]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 0, 1, 0]),
+};
 
 export class MetaBundleBuilding extends ModMetaBuilding {
     constructor() {
@@ -52,6 +74,18 @@ export class MetaBundleBuilding extends ModMetaBuilding {
                 rotationVariant: 3,
             },
             {
+                variant,
+                name,
+                description,
+                rotationVariant: 4,
+            },
+            {
+                variant,
+                name,
+                description,
+                rotationVariant: 5,
+            },
+            {
                 variant: enumBundleVariants.interface,
                 name: "Bundle Interface",
                 description: "Connects wires to the specified channel of a bundle."
@@ -70,7 +104,7 @@ export class MetaBundleBuilding extends ModMetaBuilding {
     getDimensions() {
         return new Vector(1, 1);
     }
-    getStayInPlacementMod() {
+    getStayInPlacementMode() {
         return true;
     }
     getPlacementSound() {
@@ -106,7 +140,7 @@ export class MetaBundleBuilding extends ModMetaBuilding {
                 if(!entity.components.Bundle) {
                     entity.addComponent(new BundleComponent({}));
                 }
-                entity.components.Bundle.type = arrayWireRotationVariantToType[rotationVariant];
+                entity.components.Bundle.type = arrayBundleRotationVariantToType[rotationVariant];
                 break;
             }
             case enumBundleVariants.interface: {
@@ -123,7 +157,7 @@ export class MetaBundleBuilding extends ModMetaBuilding {
     getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant, entity) {
         switch (variant) {
             case defaultBuildingVariant:
-                return wireOverlayMatrices[entity.components.Bundle.type][rotation];
+                return bundleOverlayMatrices[entity.components.Bundle.type][rotation];
             case enumBundleVariants.interface:
                 return interfaceOverlayMatrices[rotation];
         }
@@ -133,7 +167,7 @@ export class MetaBundleBuilding extends ModMetaBuilding {
             return super.getPreviewSprite(rotationVariant, variant);
         }
 
-        return Loader.getSprite(`sprites/wires/sets/bundle_${arrayWireRotationVariantToType[rotationVariant]}.png`);
+        return Loader.getSprite(`sprites/wires/sets/bundle_${arrayBundleRotationVariantToType[rotationVariant]}.png`);
     }
     getBlueprintSprite(rotationVariant, variant) {
         return this.getPreviewSprite(rotationVariant, variant);
@@ -155,7 +189,7 @@ export class MetaBundleBuilding extends ModMetaBuilding {
         flag |= connections.right ? 0x100 : 0;
         flag |= connections.bottom ? 0x10 : 0;
         flag |= connections.left ? 0x1 : 0;
-        let targetType = enumWireType.forward;
+        let targetType = enumBundleType.node;
 
         rotation = 0;
 
@@ -166,88 +200,93 @@ export class MetaBundleBuilding extends ModMetaBuilding {
 
             case 0x0001:
                 // Left
+                targetType = enumBundleType.stub;
                 rotation += 90;
                 break;
 
             case 0x0010:
                 // Bottom
-                // END
+                targetType = enumBundleType.stub;
                 break;
 
             case 0x0011:
                 // Bottom | Left
-                targetType = enumWireType.turn;
+                targetType = enumBundleType.turn;
                 rotation += 90;
                 break;
 
             case 0x0100:
                 // Right
-                rotation += 90;
+                targetType = enumBundleType.stub;
+                rotation -= 90;
                 break;
 
             case 0x0101:
                 // Right | Left
+                targetType = enumBundleType.forward;
                 rotation += 90;
                 break;
 
             case 0x0110:
                 // Right | Bottom
-                targetType = enumWireType.turn;
+                targetType = enumBundleType.turn;
                 break;
 
             case 0x0111:
                 // Right | Bottom | Left
-                targetType = enumWireType.split;
+                targetType = enumBundleType.split;
                 break;
 
             case 0x1000:
                 // Top
+                targetType = enumBundleType.stub;
+                rotation += 180;
                 break;
 
             case 0x1001:
                 // Top | Left
-                targetType = enumWireType.turn;
+                targetType = enumBundleType.turn;
                 rotation += 180;
                 break;
 
             case 0x1010:
-                // Top | Bottom
+                targetType = enumBundleType.forward;
                 break;
 
             case 0x1011:
                 // Top | Bottom | Left
-                targetType = enumWireType.split;
+                targetType = enumBundleType.split;
                 rotation += 90;
                 break;
 
             case 0x1100:
                 // Top | Right
-                targetType = enumWireType.turn;
+                targetType = enumBundleType.turn;
                 rotation -= 90;
                 break;
 
             case 0x1101:
                 // Top | Right | Left
-                targetType = enumWireType.split;
+                targetType = enumBundleType.split;
                 rotation += 180;
                 break;
 
             case 0x1110:
                 // Top | Right | Bottom
-                targetType = enumWireType.split;
+                targetType = enumBundleType.split;
                 rotation -= 90;
                 break;
 
             case 0x1111:
                 // Top | Right | Bottom | Left
-                targetType = enumWireType.cross;
+                targetType = enumBundleType.cross;
                 break;
         }
 
         return {
             // Clamp rotation
             rotation: (rotation + 360 * 10) % 360,
-            rotationVariant: arrayWireRotationVariantToType.indexOf(targetType),
+            rotationVariant: arrayBundleRotationVariantToType.indexOf(targetType),
         };
     }
 }

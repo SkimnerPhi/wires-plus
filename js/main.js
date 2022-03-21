@@ -17,6 +17,7 @@ import { MetaMultiplexerBuilding } from "./buildings/multiplexer";
 import { AdderComponent } from "./components/adder";
 import { BundleComponent } from "./components/bundle";
 import { BundleInterfaceComponent } from "./components/bundle_interface";
+import { BundledPinsComponent } from "./components/bundled_pins";
 import { ColorProcessorComponent } from "./components/color_processor";
 import { DiodeComponent } from "./components/diode";
 import { EdgeDetectorComponent } from "./components/edge_detector";
@@ -27,6 +28,8 @@ import { VirtualMixerComponent } from "./components/virtual_mixer";
 import { WireInsulatorComponent } from "./components/wire_insulator";
 
 import { AdderSystem } from "./systems/adder";
+import { BundleInterfaceSystem } from "./systems/bundle_interface";
+import { BundledPinsSystem } from "./systems/bundled_pins";
 import { ColorProcessorSystem } from "./systems/color_processor";
 import { DiodeSystem } from "./systems/diode";
 import { EdgeDetectorSystem } from "./systems/edge_detector";
@@ -34,6 +37,8 @@ import { MemorySystem } from "./systems/memory";
 import { MultiplexerSystem } from "./systems/multiplexer";
 import { SmartProcessorSystem } from "./systems/smart_processor";
 import { VirtualMixerSystem } from "./systems/virtual_mixer";
+
+import { HUDBundleInterfaceEdit } from "./hud/bundle_interface_edit";
 
 import adderIcon from "../res/sprites/building_icons/adder.png";
 import advancedProcessorIcon from "../res/sprites/building_icons/advanced_processor.png";
@@ -43,8 +48,6 @@ import memoryIcon from "../res/sprites/building_icons/memory.png";
 import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
 
 import META from "../mod.json";
-import { HUDBundleInterfaceEdit } from "./hud/bundle_interface_edit";
-import { BundleInterfaceSystem } from "./systems/bundle_interface";
 
 class ModImpl extends Mod {
     init() {
@@ -58,6 +61,7 @@ class ModImpl extends Mod {
         this.modInterface.registerComponent(AdderComponent);
         this.modInterface.registerComponent(BundleComponent);
         this.modInterface.registerComponent(BundleInterfaceComponent);
+        this.modInterface.registerComponent(BundledPinsComponent);
         this.modInterface.registerComponent(ColorProcessorComponent);
         this.modInterface.registerComponent(DiodeComponent);
         this.modInterface.registerComponent(EdgeDetectorComponent);
@@ -146,6 +150,11 @@ class ModImpl extends Mod {
             before: "end",
         });
         this.modInterface.registerGameSystem({
+            id: "bundledPins",
+            systemClass: BundledPinsSystem,
+            before: "end",
+        });
+        this.modInterface.registerGameSystem({
             id: "colorProcessor",
             systemClass: ColorProcessorSystem,
             before: "end",
@@ -184,3 +193,8 @@ class ModImpl extends Mod {
         this.modInterface.registerHudElement("bundleInterfaceEdit", HUDBundleInterfaceEdit);
     }
 }
+
+ModImpl["WireInsulatorComponent"] = WireInsulatorComponent;
+ModImpl["BundleComponent"] = BundleComponent;
+ModImpl["BundleInterfaceComponent"] = BundleInterfaceComponent;
+ModImpl["BundledPinsComponent"] = BundledPinsComponent;
