@@ -18,7 +18,7 @@ const colors = {
     [enumVxMixerType.unmixer]: new MetaMixerBuilding().getSilhouetteColor(),
     [enumSmartProcessorType.stacker]: new MetaStackerBuilding().getSilhouetteColor(),
     [enumSmartProcessorType.painter]: new MetaPainterBuilding().getSilhouetteColor(),
-   // [enumSmartProcessorType.nipper]: new MetaCutterBuilding().getSilhoutetteColor(),
+    [enumSmartProcessorType.nipper]: new MetaCutterBuilding().getSilhouetteColor(),
     [enumColorProcessorType.adder]: new MetaMixerBuilding().getSilhouetteColor(),
     [enumColorProcessorType.subtractor]: new MetaMixerBuilding().getSilhouetteColor(),
 };
