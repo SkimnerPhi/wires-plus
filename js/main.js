@@ -48,6 +48,9 @@ import memoryIcon from "../res/sprites/building_icons/memory.png";
 import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
 
 import META from "../mod.json";
+import { BulkInverterComponent } from "./components/bulk_inverter";
+import { MetaBulkInverterBuilding } from "./buildings/bulk_inverter";
+import { BulkInverterSystem } from "./systems/bulk_inverter";
 
 class ModImpl extends Mod {
     init() {
@@ -57,144 +60,95 @@ class ModImpl extends Mod {
         patchWireSystem.call(this);
         patchGameLogic.call(this);
 
+        this.component(AdderComponent);
+        this.component(BundleComponent);
+        this.component(BundleInterfaceComponent);
+        this.component(BundledPinsComponent);
+        this.component(ColorProcessorComponent);
+        this.component(DiodeComponent);
+        this.component(EdgeDetectorComponent);
+        this.component(MemoryComponent);
+        this.component(MultiplexerComponent);
+        this.component(SmartProcessorComponent);
+        this.component(VirtualMixerComponent);
+        this.component(WireInsulatorComponent);
+        this.component(BulkInverterComponent);
 
-        this.modInterface.registerComponent(AdderComponent);
-        this.modInterface.registerComponent(BundleComponent);
-        this.modInterface.registerComponent(BundleInterfaceComponent);
-        this.modInterface.registerComponent(BundledPinsComponent);
-        this.modInterface.registerComponent(ColorProcessorComponent);
-        this.modInterface.registerComponent(DiodeComponent);
-        this.modInterface.registerComponent(EdgeDetectorComponent);
-        this.modInterface.registerComponent(MemoryComponent);
-        this.modInterface.registerComponent(MultiplexerComponent);
-        this.modInterface.registerComponent(SmartProcessorComponent);
-        this.modInterface.registerComponent(VirtualMixerComponent);
-        this.modInterface.registerComponent(WireInsulatorComponent);
-
-
-        this.modInterface.registerNewBuilding({
-            metaClass: MetaAdderBuilding,
-            buildingIconBase64: adderIcon,
+        this.building(MetaAdvancedProcessorBuilding, {
+            icon: advancedProcessorIcon,
         });
-        this.modInterface.registerNewBuilding({
-            metaClass: MetaBundleBuilding,
-            buildingIconBase64: advancedProcessorIcon,
+        this.building(MetaMultiplexerBuilding, {
+            icon: multiplexerIcon,
         });
-        this.modInterface.registerNewBuilding({
-            metaClass: MetaDiodeBuilding,
-            buildingIconBase64: diodeIcon,
+        this.building(MetaMemoryBuilding, {
+            icon: memoryIcon,
         });
-        this.modInterface.registerNewBuilding({
-            metaClass: MetaEdgeDetectorBuilding,
-            buildingIconBase64: edgeDetectorIcon,
+        this.building(MetaAdderBuilding, {
+            icon: adderIcon,
         });
-        this.modInterface.registerNewBuilding({
-            metaClass: MetaMemoryBuilding,
-            buildingIconBase64: memoryIcon,
-        });
-        this.modInterface.registerNewBuilding({
-            metaClass: MetaMultiplexerBuilding,
-            buildingIconBase64: multiplexerIcon,
-        });
-        this.modInterface.registerNewBuilding({
-            metaClass: MetaAdvancedProcessorBuilding,
-            buildingIconBase64: advancedProcessorIcon,
-        });
-
-        this.modInterface.addNewBuildingToToolbar({
-            toolbar: "wires",
-            location: "primary",
-            metaClass: MetaAdvancedProcessorBuilding,
-        });
-        this.modInterface.addNewBuildingToToolbar({
-            toolbar: "wires",
-            location: "primary",
-            metaClass: MetaMultiplexerBuilding,
-        });
-        this.modInterface.addNewBuildingToToolbar({
-            toolbar: "wires",
-            location: "primary",
-            metaClass: MetaMemoryBuilding,
-        });
-        this.modInterface.addNewBuildingToToolbar({
-            toolbar: "wires",
-            location: "primary",
-            metaClass: MetaAdderBuilding,
-        });
-        
-        this.modInterface.addNewBuildingToToolbar({
-            toolbar: "wires",
+        this.building(MetaDiodeBuilding, {
+            icon: diodeIcon,
             location: "secondary",
-            metaClass: MetaDiodeBuilding,
         });
-        this.modInterface.addNewBuildingToToolbar({
-            toolbar: "wires",
+        this.building(MetaEdgeDetectorBuilding, {
+            icon: edgeDetectorIcon,
             location: "secondary",
-            metaClass: MetaEdgeDetectorBuilding,
         });
-        this.modInterface.addNewBuildingToToolbar({
-            toolbar: "wires",
+        this.building(MetaBundleBuilding, {
+            icon: advancedProcessorIcon,
             location: "secondary",
-            metaClass: MetaBundleBuilding,
-        });
-
-
-        this.modInterface.registerGameSystem({
-            id: "adder",
-            systemClass: AdderSystem,
-            before: "end",
-        });
-        this.modInterface.registerGameSystem({
-            id: "bundleInterface",
-            systemClass: BundleInterfaceSystem,
-            before: "end",
-        });
-        this.modInterface.registerGameSystem({
-            id: "bundledPins",
-            systemClass: BundledPinsSystem,
-            before: "end",
-        });
-        this.modInterface.registerGameSystem({
-            id: "colorProcessor",
-            systemClass: ColorProcessorSystem,
-            before: "end",
         })
-        this.modInterface.registerGameSystem({
-            id: "delay",
-            systemClass: DiodeSystem,
-            before: "end",
-        });
-        this.modInterface.registerGameSystem({
-            id: "edgeDetector",
-            systemClass: EdgeDetectorSystem,
-            before: "end",
-        });
-        this.modInterface.registerGameSystem({
-            id: "memory",
-            systemClass: MemorySystem,
-            before: "end",
-        });
-        this.modInterface.registerGameSystem({
-            id: "multiplexer",
-            systemClass: MultiplexerSystem,
-            before: "end",
-        });
-        this.modInterface.registerGameSystem({
-            id: "smartProcessor",
-            systemClass: SmartProcessorSystem,
-            before: "end",
-        });
-        this.modInterface.registerGameSystem({
-            id: "virtualMixer",
-            systemClass: VirtualMixerSystem,
-            before: "end",
+        this.building(MetaBulkInverterBuilding, {
+            icon: advancedProcessorIcon,
+            location: "secondary",
         });
 
-        this.modInterface.registerHudElement("bundleInterfaceEdit", HUDBundleInterfaceEdit);
+        this.system(AdderSystem);
+        this.system(BundleInterfaceSystem);
+        this.system(BundledPinsSystem);
+        this.system(ColorProcessorSystem);
+        this.system(DiodeSystem);
+        this.system(EdgeDetectorSystem);
+        this.system(MemorySystem);
+        this.system(MultiplexerSystem);
+        this.system(SmartProcessorSystem);
+        this.system(VirtualMixerSystem);
+        this.system(BulkInverterSystem);
+
+        this.hudElement("bundleInterfaceEdit", HUDBundleInterfaceEdit);
+    }
+
+    component(component) {
+        const name = component.name;
+        this[name] = component;
+        this.modInterface.registerComponent(component);
+    }
+    building(metaClass, { icon, toolbar = "wires", location = "primary" }) {
+        const name = metaClass.name;
+        this[name] = metaClass;
+        this.modInterface.registerNewBuilding({
+            metaClass,
+            buildingIconBase64: icon,
+        });
+        this.modInterface.addNewBuildingToToolbar({
+            toolbar,
+            location,
+            metaClass,
+        });
+    }
+    system(systemClass, before = "end") {
+        const name = systemClass.name;
+        const id = name.replace("System", "").replace(/^\w/, (match) => match.toLowerCase());
+        this[name] = systemClass;
+        this.modInterface.registerGameSystem({
+            id,
+            systemClass,
+            before,
+        });
+    }
+    hudElement(id, hudElement) {
+        const name = hudElement.name;
+        this[name] = hudElement;
+        this.modInterface.registerHudElement(id, hudElement);
     }
 }
-
-ModImpl["WireInsulatorComponent"] = WireInsulatorComponent;
-ModImpl["BundleComponent"] = BundleComponent;
-ModImpl["BundleInterfaceComponent"] = BundleInterfaceComponent;
-ModImpl["BundledPinsComponent"] = BundledPinsComponent;
