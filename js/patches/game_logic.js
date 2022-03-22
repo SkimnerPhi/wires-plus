@@ -82,6 +82,42 @@ export function patchGameLogic() {
             const offset = enumDirectionToVector[edge];
             const targetTile = tile.add(offset);
 
+            // Search for relevant pins
+            const pinEntities = this.root.map.getLayersContentsMultipleXY(targetTile.x, targetTile.y);
+
+            // Go over all entities which could have a pin
+            for (let i = 0; i < pinEntities.length; ++i) {
+                const pinEntity = pinEntities[i];
+                const pinComp = pinEntity.components.BundledPins;
+                const staticComp = pinEntity.components.StaticMapEntity;
+
+                // Skip those who don't have pins
+                if (!pinComp) {
+                    continue;
+                }
+
+                // Go over all pins
+                const pins = pinComp.slots;
+                for (let k = 0; k < pinComp.slots.length; ++k) {
+                    const pinSlot = pins[k];
+                    const pinLocation = staticComp.localTileToWorld(pinSlot.pos);
+                    const pinDirection = staticComp.localDirectionToWorld(pinSlot.direction);
+
+                    // Check if the pin has the right location
+                    if (!pinLocation.equals(targetTile)) {
+                        continue;
+                    }
+
+                    // Check if the pin has the right direction
+                    if (pinDirection !== enumInvertedDirections[edge]) {
+                        continue;
+                    }
+
+                    // Found a pin!
+                    return true;
+                }
+            }
+
             // Now check if there's a connectable entity on the wires layer
             const targetEntity = this.root.map.getTileContent(targetTile, "wires");
             if (!targetEntity) {

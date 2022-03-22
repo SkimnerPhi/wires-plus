@@ -89,15 +89,33 @@ export function patchWireSystem() {
                     }
                 }
             }
+
+            for (let i = 0; i < bundledPinEntities.length; ++i) {
+                const entity = bundledPinEntities[i];
+                const slots = entity.components.BundledPins.slots;
+                for (let k = 0; k < slots.length; ++k) {
+                    const slot = slots[k];
+
+                    if (slot.type === enumPinSlotType.logicalEjector) {
+                        for (const c in slot.channels) {
+                            const channel = slot.channels[c];
+
+                            if (!channel.linkedNetwork) {
+                                this.findNetworkForEjector(entity, slot, "bundle", c);
+                            }
+                        }
+                    }
+                }
+            }
         },
-        findNetworkForEjector(initialEntity, slot) {
+        findNetworkForEjector(initialEntity, slot, variantMask = null, variantSubMask = null) {
             let currentNetwork = new WireNetwork();
             const entitiesToVisit = [
                 {
                     entity: initialEntity,
                     slot,
-                    variantMask: null,
-                    variantSubMask: null,
+                    variantMask,
+                    variantSubMask,
                 },
             ];
 
@@ -172,8 +190,8 @@ export function patchWireSystem() {
                 }
 
                 //// PINS
-                const pinsComp = nextEntity.components.WiredPins;
-                if (pinsComp) {
+                const wiredPinsComp = nextEntity.components.WiredPins;
+                if (wiredPinsComp) {
                     const slot = nextData.slot;
                     assert(slot, "No slot set for next entity");
 
@@ -202,6 +220,25 @@ export function patchWireSystem() {
                         slot.linkedNetwork = currentNetwork;
 
                         // Specify where to search next
+                        newSearchDirections = [staticComp.localDirectionToWorld(slot.direction)];
+                        newSearchTile = staticComp.localTileToWorld(slot.pos);
+                    }
+                }
+                
+                const bundledPinsComp = nextEntity.components.BundledPins;
+                if (bundledPinsComp) {
+                    const slot = nextData.slot;
+                    const channel = slot.channels[variantSubMask];
+                    if (!channel.linkedNetwork) {
+                        if (slot.type === enumPinSlotType.logicalEjector) {
+                            currentNetwork.providers.push({ entity: nextEntity, slot: channel });
+                        } else if (slot.type === enumPinSlotType.logicalAcceptor) {
+                            currentNetwork.receivers.push({ entity: nextEntity, slot: channel });
+                        }
+
+                        currentNetwork.allSlots.push({ entity: nextEntity, slot: channel });
+                        channel.linkedNetwork = currentNetwork;
+
                         newSearchDirections = [staticComp.localDirectionToWorld(slot.direction)];
                         newSearchTile = staticComp.localTileToWorld(slot.pos);
                     }
@@ -305,6 +342,38 @@ export function patchWireSystem() {
                                 });
                             }
                         }
+
+                        const bundledPinComp = entity.components.BundledPins;
+                        if (bundledPinComp) {
+                            const staticComp = entity.components.StaticMapEntity;
+
+                            // Go over all slots and see if they are connected
+                            const pinSlots = bundledPinComp.slots;
+                            for (let j = 0; j < pinSlots.length; ++j) {
+                                const slot = pinSlots[j];
+
+                                // Check if the position matches
+                                const pinPos = staticComp.localTileToWorld(slot.pos);
+                                if (!pinPos.equals(tile)) {
+                                    continue;
+                                }
+
+                                // Check if the direction (inverted) matches
+                                const pinDirection = staticComp.localDirectionToWorld(slot.direction);
+                                if (pinDirection !== enumInvertedDirections[direction]) {
+                                    continue;
+                                }
+
+                                if (!slot.channels[variantSubMask].linkedNetwork) {
+                                    result.push({
+                                        entity,
+                                        slot,
+                                        variantMask,
+                                        variantSubMask,
+                                    });
+                                }
+                            }
+                        }
                     } else {
                         const wireComp = entity.components.Wire;
 
@@ -337,12 +406,12 @@ export function patchWireSystem() {
                         }
 
                         // Check for connected slots
-                        const pinComp = entity.components.WiredPins;
-                        if (pinComp) {
+                        const wiredPinComp = entity.components.WiredPins;
+                        if (wiredPinComp) {
                             const staticComp = entity.components.StaticMapEntity;
 
                             // Go over all slots and see if they are connected
-                            const pinSlots = pinComp.slots;
+                            const pinSlots = wiredPinComp.slots;
                             for (let j = 0; j < pinSlots.length; ++j) {
                                 const slot = pinSlots[j];
 
@@ -497,7 +566,8 @@ export function patchWireSystem() {
                 || entity.components.WiredPins
                 || entity.components.WireTunnel
                 || entity.components.Bundle
-                || entity.components.BundleInterface;
+                || entity.components.BundleInterface
+                || entity.components.BundledPins;
         },
         updateSurroundingWirePlacement(affectedArea) {
             const metaWire = gMetaBuildingRegistry.findByClass(MetaWireBuilding);

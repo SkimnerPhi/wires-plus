@@ -47,18 +47,50 @@ export class HUDBundleInterfaceEdit extends BaseHUDPart {
             validator: val => val in enumColors
         });
         
-        const items = [...Object.values(COLOR_ITEM_SINGLETONS)];
-        const itemInput = new FormElementItemChooser({
+        const {
+            uncolored,
+            red,
+            yellow,
+            green,
+            cyan,
+            blue,
+            purple,
+            white,
+            ...other
+        } = COLOR_ITEM_SINGLETONS;
+        const items = [...Object.values(other)];
+
+        const primaryInput = new FormElementItemChooser({
             id: "interfaceItem",
             label: null,
-            items,
+            items: [
+                uncolored,
+                red,
+                yellow,
+                green,
+                cyan,
+                blue,
+                purple,
+                white,
+            ],
         });
+
+        var secondaryInput;
+        if (items.length) {
+            secondaryInput = new FormElementItemChooser({
+                id: "interfaceItemAlt",
+                label: null,
+                items,
+            });
+        }
         
         const dialog = new DialogWithForm({
             app: this.root.app,
             title: "Bundle Interface Channel",
             desc: "A colored channel to link to on the bundle network",
-            formElements: [itemInput, textInput],
+            formElements: secondaryInput
+                ? [primaryInput, secondaryInput, textInput]
+                : [primaryInput, textInput],
             buttons: ["cancel:bad:escape", "ok:good:enter"],
             closeButton: false,
         });
@@ -79,8 +111,10 @@ export class HUDBundleInterfaceEdit extends BaseHUDPart {
                 return;
             }
 
-            if (itemInput.chosenItem) {
-                interfaceComp.channel = itemInput.chosenItem.getAsCopyableKey();
+            if (primaryInput.chosenItem) {
+                interfaceComp.channel = primaryInput.chosenItem.getAsCopyableKey();
+            } else if (secondaryInput.chosenItem) {
+                interfaceComp.channel = secondaryInput.chosenItem.getAsCopyableKey();
             } else {
                 interfaceComp.channel = enumColors[textInput.getValue()];
             }

@@ -1,7 +1,19 @@
 import { enumColors } from "shapez/game/colors";
 import { Component } from "shapez/game/component";
+import { isTruthyItem } from "shapez/game/items/boolean_item";
 import { typeItemSingleton } from "shapez/game/item_resolver";
 import { types } from "shapez/savegame/serialization";
+
+export const arrayMainColors = [
+    enumColors.uncolored,
+    enumColors.red,
+    enumColors.yellow,
+    enumColors.green,
+    enumColors.cyan,
+    enumColors.blue,
+    enumColors.purple,
+    enumColors.white,
+];
 
 export class BundledPinsComponent extends Component {
     static getId() {
