@@ -1,6 +1,7 @@
 import { Mod } from "shapez/mods/mod";
 
 import { patchLogicGate } from "./patches/logic_gate";
+import { patchConstantSignal } from "./patches/constant_signal";
 import { patchWire } from "./patches/wire";
 import { patchWireTunnel } from "./patches/wire_tunnel";
 import { patchWireSystem } from "./patches/wire_system";
@@ -23,6 +24,7 @@ import { DiodeComponent } from "./components/diode";
 import { EdgeDetectorComponent } from "./components/edge_detector";
 import { MemoryComponent } from "./components/memory";
 import { MultiplexerComponent } from "./components/multiplexer";
+import { RandomSignalComponent } from "./components/random_signal";
 import { SmartProcessorComponent } from "./components/smart_processor";
 import { VirtualMixerComponent } from "./components/virtual_mixer";
 import { WireInsulatorComponent } from "./components/wire_insulator";
@@ -35,6 +37,7 @@ import { DiodeSystem } from "./systems/diode";
 import { EdgeDetectorSystem } from "./systems/edge_detector";
 import { MemorySystem } from "./systems/memory";
 import { MultiplexerSystem } from "./systems/multiplexer";
+import { RandomSignalSystem } from "./systems/random_signal";
 import { SmartProcessorSystem } from "./systems/smart_processor";
 import { VirtualMixerSystem } from "./systems/virtual_mixer";
 
@@ -55,6 +58,7 @@ import { BulkInverterSystem } from "./systems/bulk_inverter";
 class ModImpl extends Mod {
     init() {
         patchLogicGate.call(this);
+        patchConstantSignal.call(this);
         patchWire.call(this);
         patchWireTunnel.call(this);
         patchWireSystem.call(this);
@@ -69,6 +73,7 @@ class ModImpl extends Mod {
         this.component(EdgeDetectorComponent);
         this.component(MemoryComponent);
         this.component(MultiplexerComponent);
+        this.component(RandomSignalComponent);
         this.component(SmartProcessorComponent);
         this.component(VirtualMixerComponent);
         this.component(WireInsulatorComponent);
@@ -111,6 +116,7 @@ class ModImpl extends Mod {
         this.system(EdgeDetectorSystem);
         this.system(MemorySystem);
         this.system(MultiplexerSystem);
+        this.system(RandomSignalSystem);
         this.system(SmartProcessorSystem);
         this.system(VirtualMixerSystem);
         this.system(BulkInverterSystem);
