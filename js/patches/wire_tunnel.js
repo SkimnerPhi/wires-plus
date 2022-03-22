@@ -6,14 +6,14 @@ import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { enumWireInsulatorVariants, WireInsulatorComponent } from "../components/wire_insulator";
 import { isModSafeRewardUnlocked } from "../utils";
 
-export function patchWireTunnel() {
-    const overlayMatrices = {
-        [defaultBuildingVariant]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 0, 1, 0]),
-        forward: generateMatrixRotations([0, 1, 0, 0, 1, 0, 0, 1, 0]),
-        turn: generateMatrixRotations([0, 0, 0, 0, 1, 1, 0, 1, 0]),
-        double_turn: generateMatrixRotations([1, 1, 0, 1, 0, 1, 0, 1, 1]),
-    };
+const overlayMatrices = {
+    [defaultBuildingVariant]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 0, 1, 0]),
+    forward: generateMatrixRotations([0, 1, 0, 0, 1, 0, 0, 1, 0]),
+    turn: generateMatrixRotations([0, 0, 0, 0, 1, 1, 0, 1, 0]),
+    double_turn: generateMatrixRotations([1, 1, 0, 1, 0, 1, 0, 1, 1]),
+};
 
+export function patchWireTunnel() {
     this.modInterface.addVariantToExistingBuilding(
         MetaWireTunnelBuilding,
         enumWireInsulatorVariants.forward,
@@ -67,14 +67,11 @@ export function patchWireTunnel() {
         getIsRotateable() {
             return true;
         },
-    }));
-
-    this.modInterface.extendClass(MetaWireTunnelBuilding, ({ $old }) => ({
         updateVariants(entity, rotationVariant, variant) {
             const tunnelType = enumWireInsulatorVariants[variant];
             if (!entity.components.WireInsulator) {
                 entity.addComponent(new WireInsulatorComponent({ type: tunnelType }));
             }
-        }
+        },
     }));
 }
