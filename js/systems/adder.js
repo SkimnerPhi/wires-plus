@@ -45,10 +45,15 @@ export class AdderSystem extends GameSystemWithFilter {
                 continue;
             }
 
-            // Result pin is equal to bit 0 of sum
-            slotComp.slots[3].value = castBool(sum & 0x1);
-            // Carry pin is equal to bit 1 of sum
-            slotComp.slots[4].value = castBool(sum & 0x2);
+            let mask = 0x1;
+            for (let pin = 0; pin < slotComp.slots.length; pin++) {
+                const slot = slotComp.slots[pin];
+                if (slot.type !== enumPinSlotType.logicalEjector) {
+                    continue;
+                }
+                slot.value = castBool(sum & mask);
+                mask <<= 1;
+            }
         }
     }
 }
