@@ -4,6 +4,7 @@ import { ModInterface } from "shapez/mods/mod_interface";
 import { patchLogicGate } from "./patches/logic_gate";
 import { patchWire } from "./patches/wire";
 import { patchWireTunnel } from "./patches/wire_tunnel";
+import { patchAnalyzer } from "./patches/analyzer";
 
 import { MetaAdderBuilding } from "./buildings/adder";
 import { MetaAdvancedProcessorBuilding } from "./buildings/advanced_processor";
@@ -45,6 +46,7 @@ class ModImpl extends Mod {
         patchLogicGate.call(this);
         patchWire.call(this);
         patchWireTunnel.call(this);
+        patchAnalyzer.call(this);
 
 
         this.modInterface.registerComponent(AdderComponent);
