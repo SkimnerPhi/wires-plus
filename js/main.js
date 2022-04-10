@@ -45,15 +45,14 @@ import { HUDBundleInterfaceEdit } from "./hud/bundle_interface_edit";
 
 import adderIcon from "../res/sprites/building_icons/adder.png";
 import advancedProcessorIcon from "../res/sprites/building_icons/advanced_processor.png";
+import bundleIcon from "../res/sprites/building_icons/bundle.png";
 import diodeIcon from "../res/sprites/building_icons/diode.png";
 import edgeDetectorIcon from "../res/sprites/building_icons/edge_detector.png";
 import memoryIcon from "../res/sprites/building_icons/memory.png";
 import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
 
 import META from "../mod.json";
-import { BulkInverterComponent } from "./components/bulk_inverter";
-import { MetaBulkInverterBuilding } from "./buildings/bulk_inverter";
-import { BulkInverterSystem } from "./systems/bulk_inverter";
+import { isModLoaded } from "./utils";
 
 class ModImpl extends Mod {
     init() {
@@ -77,7 +76,6 @@ class ModImpl extends Mod {
         this.component(SmartProcessorComponent);
         this.component(VirtualMixerComponent);
         this.component(WireInsulatorComponent);
-        this.component(BulkInverterComponent);
 
         this.building(MetaAdvancedProcessorBuilding, {
             icon: advancedProcessorIcon,
@@ -99,14 +97,13 @@ class ModImpl extends Mod {
             icon: edgeDetectorIcon,
             location: "secondary",
         });
-        this.building(MetaBundleBuilding, {
-            icon: advancedProcessorIcon,
-            location: "secondary",
-        })
-        this.building(MetaBulkInverterBuilding, {
-            icon: advancedProcessorIcon,
-            location: "secondary",
-        });
+
+        if (isModLoaded("wires-plus-plus")) {
+            this.building(MetaBundleBuilding, {
+                icon: bundleIcon,
+                location: "secondary",
+            });
+        }
 
         this.system(AdderSystem);
         this.system(BundleInterfaceSystem);
@@ -119,7 +116,6 @@ class ModImpl extends Mod {
         this.system(RandomSignalSystem);
         this.system(SmartProcessorSystem);
         this.system(VirtualMixerSystem);
-        this.system(BulkInverterSystem);
 
         this.hudElement("bundleInterfaceEdit", HUDBundleInterfaceEdit);
     }

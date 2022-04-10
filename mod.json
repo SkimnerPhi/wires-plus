@@ -1,11 +1,29 @@
 {
     "entry": "main.js",
     "id": "wires-plus",
-    "version": "1.4.4",
+    "version": "1.5.0",
     "name": "Wires+",
-    "author": "SkimnerPhi + TcePrepK",
+    "author": "SkimnerPhi",
     "description": "Adds commonly used wire designs as single buildings",
-    "website": "https://github.com/SkimnerPhi/shapezio-mods",
+    "website": "https://skimnerphi.net/mods/wires-plus",
     "settings": {},
-    "modId": 1839449
+    "modId": 1839449,
+    "extra": {
+        "icon": "https://raw.githubusercontent.com/SkimnerPhi/shapez-mods/main/promo/wires-plus/icon.png",
+        "authors": [
+            {
+                "name": "SkimnerPhi",
+                "icon": "https://avatars.githubusercontent.com/u/69558934",
+                "website": "https://skimnerphi.net"
+            }
+        ],
+        "screenshots": [
+            "https://image.modcdn.io/mods/6f25/1805913/demo1.png",
+            "https://image.modcdn.io/mods/6f25/1805913/demo2.png",
+            "https://image.modcdn.io/mods/6f25/1805913/alu.jpg"
+        ],
+        "source": "https://github.com/SkimnerPhi/wires-plus",
+        "library": false,   
+        "readme": "<p><a href=\"https://shapez.mod.io/shapez-industries\" title=\"Works with SI\" target=\"_blank\"><img src=\"https://raw.githubusercontent.com/SkimnerPhi/shapez-mods/main/promo/si-shield.png\" alt=\"Works with SI\"/></a> <a href=\"https://shapez.mod.io/sk-update\" title=\"Supports SkUpdate\" target=\"_blank\"><img src=\"https://raw.githubusercontent.com/SkimnerPhi/shapez-mods/main/promo/skUpdate-shield.png\" alt=\"Supports SkUpdate\"/></a></p><h2>More Wires</h2><p>Adds two new wire colors, orange and purple, that otherwise act like vanilla wires. Also, adds wire insulators, which are like wire crossings but go in different directions.</p><hr><img src=\"https://skimnerphi.net/mods/wires-plus/buildings.webp\"><h2>New Buildings</h2><h3>Advanced Processing</h3><p>Mix and unmix colors by converting them to binary, or by adding and subtracting them. Smart processors can be used even when only one input is connected.</p><h3>Memory</h3><p>Store data using flip flops and memory cells.</p><h3>Edge Detectors</h3><p>Set up tick-precision circuits quickly with edge detectors, which will pulse for a single tick when the input value changes.</p><h3>Multiplexers</h3><p>Select between inputs or outputs with muxers and demuxers.</p><h3>Arithmetic</h3><p>Add together boolean values with the adder.</p><h3>Diodes</h3><p>Prevent backflow with diodes and buffers.</p><h3>More Virtual Processors</h3><p>Use 180° and CCW virtual rotators so you don't have to chain the vanilla rotator.</p><h3>Mod Support</h3><p>With Shapez Industries installed, virtual combiners and smelters help you process shapez on the virtual layer. Lots of Colors works with the color adder and subtractor.</p>"
+    }
 }
