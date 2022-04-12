@@ -3,6 +3,12 @@ import { GameSystemWithFilter } from "shapez/game/game_system_with_filter";
 import { COLOR_ITEM_SINGLETONS } from "shapez/game/items/color_item";
 import { ColorProcessorComponent, enumColorProcessorType } from "../components/color_processor";
 
+shapez.enumSpecialColorUnmixingResults ??= {};
+const whiteUnmixing = (shapez.enumSpecialColorUnmixingResults[enumColors.white] ??= {});
+whiteUnmixing[enumColors.cyan] ??= enumColors.red;
+whiteUnmixing[enumColors.yellow] ??= enumColors.blue;
+whiteUnmixing[enumColors.purple] ??= enumColors.green;
+
 export class ColorProcessorSystem extends GameSystemWithFilter {
     constructor(root) {
         super(root, [ColorProcessorComponent]);
