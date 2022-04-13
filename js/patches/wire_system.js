@@ -18,6 +18,7 @@ import { arrayBundleRotationVariantToType, enumBundleType, MetaBundleBuilding } 
 import { BundleComponent } from "../components/bundle";
 import { BundledPinsComponent } from "../components/bundled_pins";
 import { bundleConnectionFacing, BundleInterfaceComponent, wireConnectionFacing } from "../components/bundle_interface";
+import { isModLoaded } from "../utils";
 
 export function patchWireSystem() {
     const logger = createLogger("wires");
@@ -571,7 +572,12 @@ export function patchWireSystem() {
         },
         updateSurroundingWirePlacement(affectedArea) {
             const metaWire = gMetaBuildingRegistry.findByClass(MetaWireBuilding);
-            const metaBundle = gMetaBuildingRegistry.findByClass(MetaBundleBuilding);
+            const metaBundle = (() => {
+                // gross hack to keep dev mode from blowing up from assertion errors
+                if (isModLoaded("wires-plus-plus")) {
+                    return gMetaBuildingRegistry.findByClass(MetaBundleBuilding);
+                }
+            })();
 
             for (let x = affectedArea.x; x < affectedArea.right(); ++x) {
                 for (let y = affectedArea.y; y < affectedArea.bottom(); ++y) {
@@ -612,7 +618,7 @@ export function patchWireSystem() {
                         }
 
                         const targetBundleComp = targetEntity.components.Bundle;
-                        if (targetBundleComp) {
+                        if (metaBundle && targetBundleComp) {
                             const {
                                 rotation,
                                 rotationVariant,
