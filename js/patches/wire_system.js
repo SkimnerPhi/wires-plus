@@ -647,13 +647,8 @@ export function patchWireSystem() {
         },
     }));
 
-    this.modInterface.extendClass(MapChunkView, ({ $old }) => ({
-        drawWiresForegroundLayer(parameters) {
-            const systems = this.root.systemMgr.systems;
-            systems.wire.drawChunk(parameters, this);
-            systems.staticMapEntities.drawWiresChunk(parameters, this);
-            systems.wiredPins.drawChunk(parameters, this);
-            systems.bundleInterface.drawChunk(parameters, this);
-        }
-    }));
+    this.modInterface.runAfterMethod(MapChunkView, "drawWiresForegroundLayer", (parameters) => {
+        const systems = this.root.systemMgr.systems;
+        systems.bundleInterface.drawChunk(parameters, this);
+    });
 }
