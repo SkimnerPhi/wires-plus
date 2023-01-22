@@ -17,6 +17,8 @@ export class WireInsulatorComponent extends Component {
     constructor(payload = { type: "forward" }) {
         super();
 
+        this.linkedNetworks = [];
+
         switch(payload.type) {
             case defaultBuildingVariant: {
                 this.connections = [
@@ -128,15 +130,17 @@ export class WireInsulatorComponent extends Component {
                 break;
             }
         }
-        // Generate reverse lookups
-        this.connections = this.connections.flatMap(c => [
+        // Generate lookups
+        this.connections = this.connections.flatMap((c, pair) => [
             {
+                pair,
                 from: c[0],
-                to: c[1]
+                to: c[1],
             },
             {
+                pair,
                 from: c[1],
-                to: c[0]
+                to: c[0],
             },
         ]);
     }

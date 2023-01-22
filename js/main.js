@@ -9,16 +9,12 @@ import { patchGameLogic } from "./patches/game_logic";
 
 import { MetaAdderBuilding } from "./buildings/adder";
 import { MetaAdvancedProcessorBuilding } from "./buildings/advanced_processor";
-import { MetaBundleBuilding } from "./buildings/bundle";
 import { MetaDiodeBuilding } from "./buildings/diode";
 import { MetaEdgeDetectorBuilding } from "./buildings/edge_detector";
 import { MetaMemoryBuilding } from "./buildings/memory";
 import { MetaMultiplexerBuilding } from "./buildings/multiplexer";
 
 import { AdderComponent } from "./components/adder";
-import { BundleComponent } from "./components/bundle";
-import { BundleInterfaceComponent } from "./components/bundle_interface";
-import { BundledPinsComponent } from "./components/bundled_pins";
 import { ColorProcessorComponent } from "./components/color_processor";
 import { DiodeComponent } from "./components/diode";
 import { EdgeDetectorComponent } from "./components/edge_detector";
@@ -30,8 +26,6 @@ import { VirtualMixerComponent } from "./components/virtual_mixer";
 import { WireInsulatorComponent } from "./components/wire_insulator";
 
 import { AdderSystem } from "./systems/adder";
-import { BundleInterfaceSystem } from "./systems/bundle_interface";
-import { BundledPinsSystem } from "./systems/bundled_pins";
 import { ColorProcessorSystem } from "./systems/color_processor";
 import { DiodeSystem } from "./systems/diode";
 import { EdgeDetectorSystem } from "./systems/edge_detector";
@@ -41,11 +35,8 @@ import { RandomSignalSystem } from "./systems/random_signal";
 import { SmartProcessorSystem } from "./systems/smart_processor";
 import { VirtualMixerSystem } from "./systems/virtual_mixer";
 
-import { HUDBundleInterfaceEdit } from "./hud/bundle_interface_edit";
-
 import adderIcon from "../res/sprites/building_icons/adder.png";
 import advancedProcessorIcon from "../res/sprites/building_icons/advanced_processor.png";
-import bundleIcon from "../res/sprites/building_icons/bundle.png";
 import diodeIcon from "../res/sprites/building_icons/diode.png";
 import edgeDetectorIcon from "../res/sprites/building_icons/edge_detector.png";
 import memoryIcon from "../res/sprites/building_icons/memory.png";
@@ -53,6 +44,8 @@ import multiplexerIcon from "../res/sprites/building_icons/multiplexer.png";
 
 import META from "../mod.json";
 import { isModLoaded } from "./utils";
+import { WireInsulatorElement } from "./elements/wire_insulator";
+
 
 class ModImpl extends Mod {
     init() {
@@ -61,12 +54,8 @@ class ModImpl extends Mod {
         patchWire.call(this);
         patchWireTunnel.call(this);
         patchWireSystem.call(this);
-        patchGameLogic.call(this);
 
         this.component(AdderComponent);
-        this.component(BundleComponent);
-        this.component(BundleInterfaceComponent);
-        this.component(BundledPinsComponent);
         this.component(ColorProcessorComponent);
         this.component(DiodeComponent);
         this.component(EdgeDetectorComponent);
@@ -98,16 +87,7 @@ class ModImpl extends Mod {
             location: "secondary",
         }, "EdgeDetector");
 
-        if (isModLoaded("wires-plus-plus")) {
-            this.building(MetaBundleBuilding, {
-                icon: bundleIcon,
-                location: "secondary",
-            }, "Bundle");
-        }
-
         this.system(AdderSystem, "Adder");
-        this.system(BundleInterfaceSystem, "BundleInterface");
-        this.system(BundledPinsSystem, "BundledPins");
         this.system(ColorProcessorSystem, "ColorProcessor");
         this.system(DiodeSystem, "Diode");
         this.system(EdgeDetectorSystem, "EdgeDetector");
@@ -117,7 +97,12 @@ class ModImpl extends Mod {
         this.system(SmartProcessorSystem, "SmartProcessor");
         this.system(VirtualMixerSystem, "VirtualMixer");
 
-        this.hudElement("bundleInterfaceEdit", HUDBundleInterfaceEdit);
+        this.signals.appBooted.add(root => {
+            const nb = ModExtras.require("network-buddy", "^0.1.0");
+            
+            nb.registerNetworkElement(WireInsulatorElement);
+            nb.removeNetworkElement(nb.WireTunnelElement);
+        });
     }
 
     component(component) {

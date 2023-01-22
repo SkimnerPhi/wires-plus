@@ -64,8 +64,8 @@ export function patchWireTunnel() {
         getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant, entity) {
             return overlayMatrices[variant]?.[rotation];
         },
-        getIsRotateable() {
-            return true;
+        getIsRotateable(variant) {
+            return variant !== defaultBuildingVariant;
         },
         updateVariants(entity, rotationVariant, variant) {
             const tunnelType = enumWireInsulatorVariants[variant];
