@@ -98,7 +98,7 @@ class ModImpl extends Mod {
         this.system(VirtualMixerSystem, "VirtualMixer");
 
         this.signals.appBooted.add(root => {
-            const nb = ModExtras.require("network-buddy", "^0.1.0");
+            const nb = ModExtras.require("network-buddy", "^1.0.0");
             
             nb.registerNetworkElement(WireInsulatorElement);
             nb.removeNetworkElement(nb.WireTunnelElement);
