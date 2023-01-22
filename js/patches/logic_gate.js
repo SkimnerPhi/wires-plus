@@ -22,23 +22,13 @@ export function patchLogicGate() {
 
 
     const enumVariantToGate = {
-        [defaultBuildingVariant]: enumLogicGateType.cutter,
-        [enumVirtualProcessorVariants.rotater]: enumLogicGateType.rotater,
         [enumVirtualProcessorVariants.rotater_ccw]: enumLogicGateType.rotater_ccw,
         [enumVirtualProcessorVariants.rotater_180]: enumLogicGateType.rotater_180,
-        [enumVirtualProcessorVariants.unstacker]: enumLogicGateType.unstacker,
-        [enumVirtualProcessorVariants.stacker]: enumLogicGateType.stacker,
-        [enumVirtualProcessorVariants.painter]: enumLogicGateType.painter,
     };
 
     const colors = {
-        [defaultBuildingVariant]: new MetaCutterBuilding().getSilhouetteColor(),
-        [enumVirtualProcessorVariants.rotater]: new MetaRotaterBuilding().getSilhouetteColor(),
         [enumVirtualProcessorVariants.rotater_ccw]: new MetaRotaterBuilding().getSilhouetteColor(),
         [enumVirtualProcessorVariants.rotater_180]: new MetaRotaterBuilding().getSilhouetteColor(),
-        [enumVirtualProcessorVariants.unstacker]: new MetaStackerBuilding().getSilhouetteColor(),
-        [enumVirtualProcessorVariants.stacker]: new MetaStackerBuilding().getSilhouetteColor(),
-        [enumVirtualProcessorVariants.painter]: new MetaPainterBuilding().getSilhouetteColor(),
     };
 
     const overlayMatrices = {
@@ -69,93 +59,47 @@ export function patchLogicGate() {
             }
         }
     );
-    if(isModLoaded("shapez-industries")) {
-        this.modInterface.addVariantToExistingBuilding(
-            MetaVirtualProcessorBuilding,
-            enumVirtualProcessorVariants.combiner,
-            {
-                name: "Virtual Combiner",
-                description: "Virtually merges two shapes into one combined shape.",
-                isUnlocked(root) {
-                    return root.hubGoals.isRewardUnlocked("reward_shape_combiner");
-                }
-            }
-        );
-        this.modInterface.addVariantToExistingBuilding(
-            MetaVirtualProcessorBuilding,
-            enumVirtualProcessorVariants.compressor,
-            {
-                name: "Virtual Smelter",
-                description: "Virtually compresses shape layers into one. Removes color while processing.",
-                isUnlocked(root) {
-                    return root.hubGoals.isRewardUnlocked("reward_shape_compressor");
-                }
-            }
-        );
-    }
 
-    this.modInterface.extendClass(MetaVirtualProcessorBuilding, ({ $old }) => ({
-        updateVariants(entity, rotationVariant, variant) {
-            const gateType = enumVariantToGate[variant];
-            entity.components.LogicGate.type = gateType;
-            const pinComp = entity.components.WiredPins;
-            switch (gateType) {
-                case enumLogicGateType.cutter:
-                case enumLogicGateType.unstacker: {
-                    pinComp.setSlots([
-                        {
-                            pos: new Vector(0, 0),
-                            direction: enumDirection.left,
-                            type: enumPinSlotType.logicalEjector,
-                        },
-                        {
-                            pos: new Vector(0, 0),
-                            direction: enumDirection.right,
-                            type: enumPinSlotType.logicalEjector,
-                        },
-                        {
-                            pos: new Vector(0, 0),
-                            direction: enumDirection.bottom,
-                            type: enumPinSlotType.logicalAcceptor,
-                        },
-                    ]);
-                    break;
-                }
-                case enumLogicGateType.rotater:
-                case enumLogicGateType.rotater_ccw:
-                case enumLogicGateType.rotater_180:
-                case enumLogicGateType.stacker:
-                case enumLogicGateType.painter: {
-                    pinComp.setSlots([
-                        {
-                            pos: new Vector(0, 0),
-                            direction: enumDirection.top,
-                            type: enumPinSlotType.logicalEjector,
-                        },
-                        {
-                            pos: new Vector(0, 0),
-                            direction: enumDirection.bottom,
-                            type: enumPinSlotType.logicalAcceptor,
-                        },
-                        {
-                            pos: new Vector(0, 0),
-                            direction: enumDirection.right,
-                            type: enumPinSlotType.logicalAcceptor,
-                        },
-                    ]);
-                    break;
-                }
-                default:
-                    assertAlways("unknown logic gate type: " + gateType);
+    this.modInterface.replaceMethod(MetaVirtualProcessorBuilding, "updateVariants", function($old, [entity, rotationVariant, variant]) {
+        const gateType = enumVariantToGate[variant];
+        entity.components.LogicGate.type = gateType;
+        const pinComp = entity.components.WiredPins;
+        switch (variant) {
+            case enumLogicGateType.rotater_ccw:
+            case enumLogicGateType.rotater_180: {
+                pinComp.setSlots([
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.top,
+                        type: enumPinSlotType.logicalEjector,
+                    },
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.bottom,
+                        type: enumPinSlotType.logicalAcceptor,
+                    },
+                    {
+                        pos: new Vector(0, 0),
+                        direction: enumDirection.right,
+                        type: enumPinSlotType.logicalAcceptor,
+                    },
+                ]);
+                break;
             }
-        },
-        getSilhouetteColor(variant) {
-            return colors[variant];
-        },
-        getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant) {
-            return overlayMatrices[variant]?.[rotation];
+            default: {
+                $old(entity, rotationVariant, variant);
+                break;
+            }
         }
-    }));
+    });
+    this.modInterface.replaceMethod(MetaVirtualProcessorBuilding, "getSilhouetteColor", function($old, [variant]) {
+        return colors[variant] ?? $old(variant);
+    });
+
+    this.modInterface.replaceMethod(MetaVirtualProcessorBuilding, "getSpecialOverlayRenderMatrix", function($old, [rotation, rotationVariant, variant]) {
+        return overlayMatrices[variant]?.[rotation] ?? $old(rotation, rotationVariant, variant);
+    });
+
     const toExtend = {
         compute_ROTATE_CCW(parameters) {
             const item = parameters[0];

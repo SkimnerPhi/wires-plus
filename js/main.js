@@ -101,7 +101,6 @@ class ModImpl extends Mod {
             const nb = ModExtras.require("network-buddy", "^1.0.0");
             
             nb.registerNetworkElement(WireInsulatorElement);
-            nb.removeNetworkElement(nb.WireTunnelElement);
         });
     }
 

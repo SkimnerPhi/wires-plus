@@ -1,13 +1,13 @@
 import { generateMatrixRotations } from "shapez/core/utils";
 import { Vector } from "shapez/core/vector";
 import { MetaWireTunnelBuilding } from "shapez/game/buildings/wire_tunnel";
+import { WireTunnelComponent } from "shapez/game/components/wire_tunnel";
 import { defaultBuildingVariant } from "shapez/game/meta_building";
 import { enumHubGoalRewards } from "shapez/game/tutorial_goals";
 import { enumWireInsulatorVariants, WireInsulatorComponent } from "../components/wire_insulator";
 import { isModSafeRewardUnlocked } from "../utils";
 
 const overlayMatrices = {
-    [defaultBuildingVariant]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 0, 1, 0]),
     forward: generateMatrixRotations([0, 1, 0, 0, 1, 0, 0, 1, 0]),
     turn: generateMatrixRotations([0, 0, 0, 0, 1, 1, 0, 1, 0]),
     double_turn: generateMatrixRotations([1, 1, 0, 1, 0, 1, 0, 1, 1]),
@@ -60,18 +60,39 @@ export function patchWireTunnel() {
         }
     );
 
-    this.modInterface.extendClass(MetaWireTunnelBuilding, ({ $old }) => ({
-        getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant, entity) {
-            return overlayMatrices[variant]?.[rotation];
-        },
-        getIsRotateable(variant) {
-            return variant !== defaultBuildingVariant;
-        },
-        updateVariants(entity, rotationVariant, variant) {
-            const tunnelType = enumWireInsulatorVariants[variant];
+    this.modInterface.replaceMethod(MetaWireTunnelBuilding, "getSpecialOverlayRenderMatrix", function($old, [rotation, rotationVariant, variant, entity]) {
+        return overlayMatrices[variant]?.[rotation] ?? $old(rotation, rotationVariant, variant);
+    });
+    this.modInterface.replaceMethod(MetaWireTunnelBuilding, "getIsRotateable", function($old, [variant]) {
+        if (variant === undefined) {
+            return true;
+        }
+
+        if (enumWireInsulatorVariants[variant]) {
+            return true;
+        }
+
+        return $old(variant);
+    });
+    this.modInterface.replaceMethod(MetaWireTunnelBuilding, "updateVariants", function($old, [entity, rotationVariant, variant]) {
+        const tunnelType = enumWireInsulatorVariants[variant];
+        if (tunnelType) {
             if (!entity.components.WireInsulator) {
                 entity.addComponent(new WireInsulatorComponent({ type: tunnelType }));
             }
-        },
-    }));
+            if (entity.components.WireTunnel) {
+                entity.removeComponent(WireTunnelComponent);
+            }
+            return;
+        }
+
+        if (!entity.components.WireTunnel) {
+            entity.addComponent(new WireTunnelComponent());
+        }
+        if (entity.components.WireInsulator) {
+            entity.removeComponent(WireInsulatorComponent);
+        }
+
+        $old(entity, rotationVariant, variant);
+    });
 }

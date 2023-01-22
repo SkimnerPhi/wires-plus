@@ -7,12 +7,10 @@ import { RandomSignalComponent } from "../components/random_signal";
 import { isModSafeRewardUnlocked } from "../utils";
 
 const enumConstantSignalVariants = {
-    [defaultBuildingVariant]: defaultBuildingVariant,
     "rng": "rng",
 };
 
 const overlayMatrices = {
-    [defaultBuildingVariant]: generateMatrixRotations([0, 1, 0, 1, 1, 1, 1, 1, 1]),
     [enumConstantSignalVariants.rng]: generateMatrixRotations([0, 1, 0, 1, 0, 1, 1, 1, 1]),
 }
 
@@ -28,33 +26,27 @@ export function patchConstantSignal() {
             }
         }
     );
-
-    this.modInterface.extendClass(MetaConstantSignalBuilding, ({ $old }) => ({
-        getSpecialOverlayRenderMatrix(rotation, rotationVariant, variant, entity) {
-            return overlayMatrices[variant]?.[rotation];
-        },
-        updateVariants(entity, rotationVariant, variant) {
-            const constType = enumConstantSignalVariants[variant];
-            switch (constType) {
-                case defaultBuildingVariant: {
-                    if (entity.components.RandomSignal) {
-                        entity.removeComponent(RandomSignalComponent);
-                    }
-                    if (!entity.components.ConstantSignal) {
-                        entity.addComponent(new ConstantSignalComponent({}));
-                    }
-                    break;
-                }
-                case enumConstantSignalVariants.rng: {
-                    if (entity.components.ConstantSignal) {
-                        entity.removeComponent(ConstantSignalComponent);
-                    }
-                    if (!entity.components.RandomSignal) {
-                        entity.addComponent(new RandomSignalComponent());
-                    }
-                    break;
-                }
+    
+    this.modInterface.replaceMethod(MetaConstantSignalBuilding, "getSpecialOverlayRenderMatrix", function($old, [rotation, rotationVariant, variant, entity]) {
+        return overlayMatrices[variant]?.[rotation] ?? $old(rotation, rotationVariant, variant);
+    });
+    this.modInterface.replaceMethod(MetaConstantSignalBuilding, "updateVariants", function($old, [entity, rotationVariant, variant]) {
+        if (variant === enumConstantSignalVariants.rng) {
+            if (entity.components.ConstantSignal) {
+                entity.removeComponent(ConstantSignalComponent);
             }
-        },
-    }));
+            if (!entity.components.RandomSignal) {
+                entity.addComponent(new RandomSignalComponent());
+            }
+            return;
+        }
+
+        if (entity.components.RandomSignal) {
+            entity.removeComponent(RandomSignalComponent);
+        }
+        if (!entity.components.ConstantSignal) {
+            entity.addComponent(new ConstantSignalComponent({}));
+        }
+        $old(entity, rotationVariant, variant);
+    });
 }
