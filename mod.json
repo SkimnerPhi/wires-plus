@@ -19,6 +19,9 @@
                 "website": "https://github.com/TcePrepK"
             }
         ],
+        "require": {
+            "network-buddy": "^1.0.0"
+        },
         "source": "https://github.com/SkimnerPhi/wires-plus",
         "readme": "<h2>More Wires</h2><p>Adds two new wire colors, orange and purple, that otherwise act like vanilla wires. Also, adds wire insulators, which are like wire crossings but go in different directions.</p><hr><img src=\"https://skimnerphi.net/mods/wires-plus/buildings.webp\"><h2>New Buildings</h2><h3>Advanced Processing</h3><p>Mix and unmix colors by converting them to binary, or by adding and subtracting them. Smart processors can be used even when only one input is connected.</p><h3>Memory</h3><p>Store data using flip flops and memory cells.</p><h3>Edge Detectors</h3><p>Set up tick-precision circuits quickly with edge detectors, which will pulse for a single tick when the input value changes.</p><h3>Multiplexers</h3><p>Select between inputs or outputs with muxers and demuxers.</p><h3>Arithmetic</h3><p>Add together boolean values with the adder.</p><h3>Diodes</h3><p>Prevent backflow with diodes and buffers.</p><h3>More Virtual Processors</h3><p>Use 180° and CCW virtual rotators so you don't have to chain the vanilla rotator.</p>",
         "updateURL": "https://skimnerphi.net/api/v1/latest/wires-plus",
